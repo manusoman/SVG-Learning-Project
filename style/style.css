@@ -1,0 +1,53 @@
+* {
+	margin: 0px;
+	padding: 0px;
+	border: none;
+	box-sizing: border-box;
+}
+
+html {
+	font-family: 'arial', sans-serif;
+	font-size: 12px;
+}
+
+body {
+	background-color: #DDD;
+}
+
+svg#Canvas {
+	position: absolute;
+	margin: 0px auto;
+	left: 0px;
+	right: 0px;
+	top: 100px;
+}
+
+section.UI-1 {
+	position: absolute;
+	padding: 15px;
+	top: 0px;
+	left: 0px;
+	background-color: #FFF;
+}
+
+section.UI-1 > ul {
+	list-style: none;
+}
+
+section.UI-1  label {
+	font-weight: bold;
+	color: #888;
+}
+
+#toolBox {
+	margin-bottom: 25px;
+}
+
+#toolBox > li {
+	margin-bottom: 5px;
+}
+
+#colorStroke > li {
+	margin-bottom: 10px;
+	text-align: right;
+}
