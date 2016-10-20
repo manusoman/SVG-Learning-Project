@@ -9,15 +9,17 @@
 		this.element = {};
 		this.startPoint = [];
 		
-		this[x](y);
+		this[x](y); // this function eliminates the requirement of a conditional statement.
 	}
 	
 	app.PathObject.prototype = {
 		constructor : app.PathObject,
 		
-		create : function(a) {
+		// 'create' function creates an SVG path.
+		create : function(a) { // Here, var 'a' is actually an array of coordinates.
 			
 			this.element = document.createElementNS("http://www.w3.org/2000/svg", "path");
+			this.element.id = "Layer" + (++app.appUI.layerPalette.layerIDCount);
 			this.element.setAttribute("draggable", true);
 			this.element.setAttribute("fill", app.appUI.fillColor);
 			this.element.setAttribute("fill-opacity", app.appUI.fillOpacity);
@@ -26,13 +28,20 @@
 			this.element.setAttribute("stroke-width", app.appUI.strokeWidth);
 			
 			this.element.setAttribute("d", ("M" + a[0] + " " + a[1]));
-			// creator function initializes the first vertex of the path.
+			// Initializes the first vertex of the path.
 			
 			app.canvas.element.appendChild(this.element);
-			app.canvas.selectedLayer = this.element;
 			
 			this.startPoint = a;
 		},
+		
+		
+		/*'assign' function takes the currently selected path object
+		and wraps it inside a PathObject.*/
+		assign : function(a) { // Here, var 'a' is the currently selected path element.
+			this.element = a;
+		},
+		
 		
 		draw : function(x, y) {
 			let d = this.element.getAttribute("d");
@@ -54,10 +63,6 @@
 				this.element.setAttribute("d", d);
 				return this;
 			}
-		},
-		
-		assign : function(a) {
-			this.element = a;
 		}
 	};
 	

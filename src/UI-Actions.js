@@ -55,22 +55,7 @@ app.appUI = {
 		
 	};
 	
-	/*app.appUI.layerSelectionUpdate = function() {
-		if(app.canvas.selectedLayer) {
-			document.getElementById("layerID").innerHTML = app.canvas.selectedLayer.id;
-		} else {
-			document.getElementById("layerID").innerHTML = "No layers selected";
-		}
-	};*/
-	
 })(window.app);
 
 app.appUI.detectSelectedTool();
 app.appUI.setColorNStroke();
-
-
-(function(app) {
-	
-	
-	
-})(window.app);
