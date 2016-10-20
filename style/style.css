@@ -27,7 +27,14 @@ section.UI-1 {
 	padding: 15px;
 	top: 0px;
 	left: 0px;
+	width: 150px;
 	background-color: #FFF;
+}
+
+section.UI-1 > #layerID {
+	margin-bottom: 25px;
+	font-weight: bold;
+	color: #d82e2e;
 }
 
 section.UI-1 > ul {
