@@ -12,6 +12,9 @@
 		this[x](y); // this function eliminates the requirement of a conditional statement.
 	}
 	
+	
+	// Defining the prototype of every objects 
+	// created by the PathObject constructor.
 	app.PathObject.prototype = {
 		constructor : app.PathObject,
 		
@@ -63,6 +66,11 @@
 				this.element.setAttribute("d", d);
 				return this;
 			}
+		},
+		
+		translate : function(x, y) {
+			console.log(this.element);
+			this.element.setAttribute("transform", "translate(" + x + ", " + y + ")");
 		}
 	};
 	

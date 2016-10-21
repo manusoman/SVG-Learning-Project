@@ -19,17 +19,37 @@ app.canvas = {
 	app.canvas.element.setAttribute("height", app.canvas.height);
 	app.canvas.element.style.backgroundColor = app.canvas.BGC;
 	
+	
+	// Canvas event handlers start ***********************************************
+	
+	
 	app.canvas.element.addEventListener("click", function(event) {
 		app.canvas.handleEvent(event);
 	}, false);
+	
+	app.canvas.element.addEventListener("dragstart", function(event) {
+		app.canvas.handleEvent(event);
+	}, false);
+	
+	app.canvas.element.addEventListener("drag", function(event) {
+		app.canvas.handleEvent(event);
+	}, false);
+	
+	app.canvas.element.addEventListener("dragend", function(event) {
+		app.canvas.handleEvent(event);
+	}, false);
+	
+	
+	// Canvas event handlers end ***********************************************
+	
 	
 	app.canvas.handleEvent = function(e) {
 		e.preventDefault();
 		e.stopPropagation();
 		
-		let a = this.element.getBoundingClientRect();
-		let x = e.clientX - a.left;
-		let y = e.clientY - a.top;
+		let a = this.element.getBoundingClientRect(),
+			x = e.clientX - a.left,
+			y = e.clientY - a.top;
 		
 		switch(app.appUI.toolSelected) {
 			case "moveTool":
@@ -64,9 +84,10 @@ app.canvas = {
 		} else if(a === "--") { // Minus object from existing selection.
 			
 			if(app.canvas.selectedObjects) {
-				let i = app.canvas.selectedObjects.indexOf(b);
-				let t = app.canvas.selectedObjects.splice(i, 1);
+				let i = app.canvas.selectedObjects.indexOf(b),
+					t = app.canvas.selectedObjects.splice(i, 1);
 				t = null;
+				
 				if(app.canvas.selectedObjects.length === 0) {
 					app.canvas.manageObjSelection(false);
 				}
@@ -84,22 +105,10 @@ app.canvas = {
 		}
 		
 		
-		// This section passess the current layer selection status
-		// to the layerPalette object.
-		if(app.canvas.selectedObjects) {
-			let i, x = [], tmp = app.canvas.selectedObjects.length;
-			for(i = 0; i < tmp; i++) {
-				x.push(app.canvas.selectedObjects[i].element);
-			}
-			app.appUI.layerPalette.selectionUpdate(x);
-		} else {		
-			app.appUI.layerPalette.selectionUpdate(false);
-		}
+		app.appUI.layerPalette.selectionUpdate();
 		
-		
-		// Returns the current selected objects list 
-		// to whoever called this function.
 		return app.canvas.selectedObjects;
+		
 	};
 	
 })(window.app);

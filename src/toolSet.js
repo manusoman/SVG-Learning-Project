@@ -20,9 +20,14 @@ app.toolSet = {
 	And as soon as the selection is removed, the object is destroyed. */
 	
 	app.toolSet.moveTool = {
-		selectedObjs : false,
+		
+		mouseDragOffset : [],
 		
 		doTheJob : function(target, type, s, c, a) {
+			this[type](target, s, c, a);
+		},
+		
+		click : function(target, s, c, a) {
 			
 			if(target === app.canvas.element) {
 				app.canvas.manageObjSelection(false);
@@ -35,10 +40,10 @@ app.toolSet = {
 					// comparing the target with the object in the 'selectedObjs' list.
 					// If yes, it blocks the function from creating another duplicate
 					// object for the same element.
-					if(this.selectedObjs) {
-						l = this.selectedObjs.length;
+					if(app.canvas.selectedObjects) {
+						l = app.canvas.selectedObjects.length;
 						for(i = 0; i < l; i++) {
-							if(this.selectedObjs[i].element === target) {
+							if(app.canvas.selectedObjects[i].element === target) {
 								f = true;
 								break;
 							}
@@ -46,22 +51,68 @@ app.toolSet = {
 					}
 					
 					if(!f) {
-						this.selectedObjs = app.canvas.manageObjSelection("++", new app.PathObject("assign", target));
+						app.canvas.manageObjSelection("++", new app.PathObject("assign", target));
 					}
 										
 				} else if(c) { // Checks whether Ctrl-key was pressed while event.
-					let i, tmp = this.selectedObjs.length;
+					let i, tmp = app.canvas.selectedObjects.length;
 					for(i = 0; i < tmp; i++) {
-						if(target === this.selectedObjs[i].element) {
-							this.selectedObjs = app.canvas.manageObjSelection("--", this.selectedObjs[i]);
+						if(target === app.canvas.selectedObjects[i].element) {
+							app.canvas.manageObjSelection("--", app.canvas.selectedObjects[i]);
 							break;
 						}
 					}
 					
 				} else {
-					this.selectedObjs = app.canvas.manageObjSelection("+", new app.PathObject("assign", target));
+					app.canvas.manageObjSelection("+", new app.PathObject("assign", target));
 				}
 			}
+		},
+		
+		dragstart : function(target, s, c, a) {
+			
+			this.mouseDragOffset = a;
+			
+			if(target === app.canvas.element) { // Checks whether the drag-start was on canvas.
+				app.canvas.manageObjSelection(false);
+				
+			} else {
+				
+				if(app.canvas.selectedObjects) {
+					let i, l = app.canvas.selectedObjects.length, f = false;
+					for(i = 0; i < l; i++) {
+						if(app.canvas.selectedObjects[i].element === target) {
+							f = true;
+							break;
+						}
+					}
+					
+					// If the darg-start was not on a selected object,
+					// the new target is selected.
+					if(!f) {
+						let tmp = app.canvas.manageObjSelection("+", new app.PathObject("assign", target));
+					}
+					
+				} else { // There was no selection, so the translation is applied 
+					     // to the newly selected object.
+					
+					let tmp = app.canvas.manageObjSelection("+", new app.PathObject("assign", target));
+				}
+				
+			}
+		},
+		
+		drag : function(target, s, c, a) {
+			let i, l = app.canvas.selectedObjects.length;
+			for(i = 0; i < l; i++) {
+				app.canvas.selectedObjects[i].translate(a[0], a[1]);
+				console.log(app.canvas.selectedObjects[i]);
+			}
+			this.mouseDragOffset = a;
+		},
+		
+		dragend : function(target, s, c, a) {
+			console.log("drag ended");
 		}
 	};
 	

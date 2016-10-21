@@ -7,22 +7,23 @@ app.appUI.layerPalette = {
 	selectedLayers 	: false
 };
 
-(function(LPalette) {
+(function(app, LPalette) {
 	
-	LPalette.selectionUpdate = function(a) {
-		let tmp = document.getElementById("layerID");
+	LPalette.selectionUpdate = function() {
+		let tmp = document.getElementById("layerID"),
+			s = "", i, l = app.canvas.selectedObjects.length;
 		
-		if(a) {
-			let i, l = a.length, s = "";
+		if(app.canvas.selectedObjects) {
+			this.selectedLayers = [];
 			for(i = 0; i < l; i++) {
-				s += a[i].id;
+				this.selectedLayers.push(app.canvas.selectedObjects[i].element);
+				s += app.canvas.selectedObjects[i].element.id;
 			}
 			tmp.innerHTML = s;
 		} else {
+			this.selectedLayers = false;
 			tmp.innerHTML = "No layers selected";
 		}
-		
-		this.selectedLayers = a;
 	};
 	
-})(window.app.appUI.layerPalette);
+})(window.app, window.app.appUI.layerPalette);

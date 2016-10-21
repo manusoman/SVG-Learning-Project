@@ -16,9 +16,10 @@ app.appUI = {
 (function(app) {
 	
 	app.appUI.detectSelectedTool = function() {
-		let tmp = document.getElementById("toolBox");
-		let buttons = tmp.getElementsByTagName("button");
-		let i, l = buttons.length;
+		let i, tmp = document.getElementById("toolBox"),
+			buttons = tmp.getElementsByTagName("button"),
+			l = buttons.length;
+		
 		for(i = 0; i < l; i++) {
 			buttons[i].addEventListener("click", function() {
 				app.appUI.toolSelected = this.value;
