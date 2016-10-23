@@ -5,11 +5,20 @@
 (function(app) {	
 	
 	// Path object constructor
-	app.PathObject = function(x, y) {
+	app.PathObject = function(type, a) {
+        // 'type' is the type of action. Possible values
+        // are 'create' & 'assign'.
+        // 'a' varies according to who calles the constructor.
+        
 		this.element = {};
 		this.startPoint = [];
+        this.tMatrix = [];
+        this.translationPivot = [];
+        this.initialCoord = [];
 		
-		this[x](y); // this function eliminates the requirement of a conditional statement.
+		this[type](a);
+        // This function eliminates the requirement of a conditional statement.
+        // Only 'assign' operator make use of the 'coord' values.
 	}
 	
 	
@@ -23,7 +32,7 @@
 			
 			this.element = document.createElementNS("http://www.w3.org/2000/svg", "path");
 			this.element.id = "Layer" + (++app.appUI.layerPalette.layerIDCount);
-			this.element.setAttribute("draggable", true);
+			this.element.setAttribute("transform", "matrix(1,0,0,1,0,0)");
 			this.element.setAttribute("fill", app.appUI.fillColor);
 			this.element.setAttribute("fill-opacity", app.appUI.fillOpacity);
 			this.element.setAttribute("stroke", app.appUI.strokeColor);
@@ -36,6 +45,7 @@
 			app.canvas.element.appendChild(this.element);
 			
 			this.startPoint = a;
+            this.initiate_Translation_Data();
 		},
 		
 		
@@ -43,11 +53,13 @@
 		and wraps it inside a PathObject.*/
 		assign : function(a) { // Here, var 'a' is the currently selected path element.
 			this.element = a;
+            this.initiate_Translation_Data();
 		},
 		
 		
-		draw : function(x, y) {
-			let d = this.element.getAttribute("d");
+		draw : function(a) {
+			let x = a[0], y = a[1],
+                d = this.element.getAttribute("d");
 				
 			/* This 'if-else' block of the polygon tool examines whether
 			the clicked point is inside the 'vertexClickTolerance' area of
@@ -67,10 +79,26 @@
 				return this;
 			}
 		},
+        
+        initiate_Translation_Data : function() {
+            this.tMatrix = this.element.getAttribute("transform").slice(7,-1).split(",");
+            this.translationPivot = [parseFloat(this.tMatrix[4]), parseFloat(this.tMatrix[5])];
+        },
 		
 		translate : function(x, y) {
-			console.log(this.element);
-			this.element.setAttribute("transform", "translate(" + x + ", " + y + ")");
+            console.log(x,y);
+            let str = "";
+            
+            x = this.translationPivot[0] + x;
+            y = this.translationPivot[1] + y;
+            
+            str = "matrix(" +
+                this.tMatrix[0] + "," +
+                this.tMatrix[1] + "," +
+                this.tMatrix[2] + "," +
+                this.tMatrix[3] + "," + x + "," + y + ")";
+            
+            this.element.setAttribute("transform", str);
 		}
 	};
 	

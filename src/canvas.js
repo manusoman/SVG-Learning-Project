@@ -17,37 +17,14 @@ app.canvas = {
 	
 	app.canvas.element.setAttribute("width", app.canvas.width);
 	app.canvas.element.setAttribute("height", app.canvas.height);
-	app.canvas.element.style.backgroundColor = app.canvas.BGC;
-	
-	
-	// Canvas event handlers start ***********************************************
-	
-	
-	app.canvas.element.addEventListener("click", function(event) {
-		app.canvas.handleEvent(event);
-	}, false);
-	
-	app.canvas.element.addEventListener("dragstart", function(event) {
-		app.canvas.handleEvent(event);
-	}, false);
-	
-	app.canvas.element.addEventListener("drag", function(event) {
-		app.canvas.handleEvent(event);
-	}, false);
-	
-	app.canvas.element.addEventListener("dragend", function(event) {
-		app.canvas.handleEvent(event);
-	}, false);
-	
-	
-	// Canvas event handlers end ***********************************************
+	app.canvas.element.style.backgroundColor = app.canvas.BGC;	
 	
 	
 	app.canvas.handleEvent = function(e) {
 		e.preventDefault();
 		e.stopPropagation();
 		
-		let a = this.element.getBoundingClientRect(),
+		let a = app.canvas.element.getBoundingClientRect(),
 			x = e.clientX - a.left,
 			y = e.clientY - a.top;
 		
@@ -56,17 +33,25 @@ app.canvas = {
 				app.toolSet.moveTool.doTheJob(e.target, e.type, e.shiftKey, e.ctrlKey, [x, y]);
 				break;
 			case "polygonTool":
-				app.toolSet.polygonTool.doTheJob(x, y);
+				app.toolSet.polygonTool.doTheJob(e.type, [x, y]);
 				break;
 			case "lineTool":
-				app.toolSet.lineTool.doTheJob(x, y);
+				app.toolSet.lineTool.doTheJob(e.type, [x, y]);
 				break;
 			default :
 				alert("No tool was selected");
 		}		
-	}
+	};
+    
+    // Canvas event handlers start ***********************************************
+	
+	app.canvas.element.addEventListener("mousedown", window.app.canvas.handleEvent, false);
+	app.canvas.element.addEventListener("mouseup", window.app.canvas.handleEvent, false);
+	
+	// Canvas event handlers end ***********************************************
 	
 	app.canvas.manageObjSelection = function(a, b) {
+        // 'a' is the operation & 'b' is the object.
 		
 		if(a === "+") { // Single object selection.
 			app.canvas.manageObjSelection(false);

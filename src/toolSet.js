@@ -20,14 +20,17 @@ app.toolSet = {
 	And as soon as the selection is removed, the object is destroyed. */
 	
 	app.toolSet.moveTool = {
+        
+		initialCoord : [],
 		
-		mouseDragOffset : [],
-		
-		doTheJob : function(target, type, s, c, a) {
-			this[type](target, s, c, a);
+		doTheJob : function(target, type, shiftKey, ctrlKey, coord) {
+			this[type](target, shiftKey, ctrlKey, coord);
 		},
 		
-		click : function(target, s, c, a) {
+		mousedown : function(target, s, c, a) {
+            
+            this.initialCoord = a;
+            app.canvas.element.addEventListener("mousemove", window.app.canvas.handleEvent, false);
 			
 			if(target === app.canvas.element) {
 				app.canvas.manageObjSelection(false);
@@ -64,56 +67,44 @@ app.toolSet = {
 					}
 					
 				} else {
-					app.canvas.manageObjSelection("+", new app.PathObject("assign", target));
-				}
-			}
-		},
-		
-		dragstart : function(target, s, c, a) {
-			
-			this.mouseDragOffset = a;
-			
-			if(target === app.canvas.element) { // Checks whether the drag-start was on canvas.
-				app.canvas.manageObjSelection(false);
-				
-			} else {
-				
-				if(app.canvas.selectedObjects) {
-					let i, l = app.canvas.selectedObjects.length, f = false;
-					for(i = 0; i < l; i++) {
-						if(app.canvas.selectedObjects[i].element === target) {
-							f = true;
-							break;
+                    
+                    let i, l, f = false;
+					
+					// This if block checkes whether the target was already selected by
+					// comparing the target with the object in the 'selectedObjs' list.
+					// If yes, it blocks the function from creating another duplicate
+					// object for the same element.
+					if(app.canvas.selectedObjects) {
+						l = app.canvas.selectedObjects.length;
+						for(i = 0; i < l; i++) {
+							if(app.canvas.selectedObjects[i].element === target) {
+								f = true;
+								break;
+							}
 						}
 					}
 					
-					// If the darg-start was not on a selected object,
-					// the new target is selected.
 					if(!f) {
-						let tmp = app.canvas.manageObjSelection("+", new app.PathObject("assign", target));
+						app.canvas.manageObjSelection("+", new app.PathObject("assign", target));
 					}
-					
-				} else { // There was no selection, so the translation is applied 
-					     // to the newly selected object.
-					
-					let tmp = app.canvas.manageObjSelection("+", new app.PathObject("assign", target));
 				}
-				
 			}
 		},
-		
-		drag : function(target, s, c, a) {
-			let i, l = app.canvas.selectedObjects.length;
+        
+        mousemove : function(target, s, c, a) {
+            let i, l = app.canvas.selectedObjects.length,
+                x = a[0] - this.initialCoord[0],
+                y = a[1] - this.initialCoord[1];
+            
+            console.log(x,y);
 			for(i = 0; i < l; i++) {
-				app.canvas.selectedObjects[i].translate(a[0], a[1]);
-				console.log(app.canvas.selectedObjects[i]);
+				app.canvas.selectedObjects[i].translate(x, y);
 			}
-			this.mouseDragOffset = a;
-		},
-		
-		dragend : function(target, s, c, a) {
-			console.log("drag ended");
-		}
+        },
+        
+        mouseup : function() {
+            app.canvas.element.removeEventListener("mousemove", window.app.canvas.handleEvent, false);
+        }
 	};
 	
 // Move Tool Definition Ends ***************************
@@ -125,17 +116,20 @@ app.toolSet = {
 	app.toolSet.polygonTool = {
 		pathObj : false,
 		
-		doTheJob : function(x, y) {
+		doTheJob : function(type, a) {
+            
+            if(type === "mouseup") {
 			
-			if(this.pathObj) {				
-				this.pathObj = this.pathObj.draw(x, y);				
-			} else {
-				app.canvas.manageObjSelection(false);
-				//this function removes existing selected objects if there's any.
-				
-				this.pathObj = new app.PathObject("create", [x, y]);
-				app.canvas.manageObjSelection("+", this.pathObj);
-			}			
+                if(this.pathObj) {
+                    this.pathObj = this.pathObj.draw(a);				
+                } else {
+                    app.canvas.manageObjSelection(false);
+                    //this function removes existing selected objects if there's any.
+
+                    this.pathObj = new app.PathObject("create", a);
+                    app.canvas.manageObjSelection("+", this.pathObj);
+                }
+            }
 		}
 	};
 	
@@ -148,18 +142,21 @@ app.toolSet = {
 	app.toolSet.lineTool = {
 		pathObj : false,
 		
-		doTheJob : function(x, y) {
+		doTheJob : function(type, a) {
+            
+            if(type === "mouseup") {
 			
-			if(this.pathObj) {
-				this.pathObj.draw(x, y);
-				this.pathObj = false;
-			} else {
-				app.canvas.manageObjSelection(false);
-				//this function removes existing selected objects if there's any.
-				
-				this.pathObj = new app.PathObject("create", [x, y]);
-				app.canvas.manageObjSelection("+", this.pathObj);
-			}
+                if(this.pathObj) {
+                    this.pathObj.draw(a);
+                    this.pathObj = false;
+                } else {
+                    app.canvas.manageObjSelection(false);
+                    //this function removes existing selected objects if there's any.
+
+                    this.pathObj = new app.PathObject("create", a);
+                    app.canvas.manageObjSelection("+", this.pathObj);
+                }
+            }
 		}
 	};
 	
