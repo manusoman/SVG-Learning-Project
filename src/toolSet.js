@@ -16,10 +16,10 @@ app.toolSet = {
 
 
 (function(app) {
-	
+
 // Move Tool Definition Starts ***************************
-	
-	
+
+
     app.toolSet.moveTool = {
 
         /* Each time a path element is selected, a wraper object for 
@@ -120,13 +120,13 @@ app.toolSet = {
             app.canvas.element.removeEventListener("mousemove", window.app.canvas.handleEvent, false);
         }
     };
-	
+
 // Move Tool Definition Ends ***************************
-	
-	
-	
+
+
+
 // Polygon Tool Definition Starts ***************************
-	
+
     app.toolSet.polygonTool = {
         pathObj : false,
 
@@ -146,13 +146,13 @@ app.toolSet = {
             }
         }
     };
-	
+
 // Polygon Tool Definition Ends ***************************
-	
-	
-	
+
+
+
 // Line Tool Definition Starts ***************************
-	
+
     app.toolSet.lineTool = {
         pathObj : false,
 
@@ -173,7 +173,7 @@ app.toolSet = {
             }
         }
     };
-	
+
 // Line Tool Definition Ends ***************************
-	
+
 })(window.app);

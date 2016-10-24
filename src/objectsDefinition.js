@@ -19,7 +19,7 @@
         this[type](a);
         // This function eliminates the requirement of a conditional statement.
         // Only 'assign' function make use of the 'a' value.
-    }
+    };
 
 
     // Defining the prototype of every objects 

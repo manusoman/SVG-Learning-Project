@@ -14,12 +14,12 @@ app.canvas = {
 
 
 (function(app) {
-	
+
     app.canvas.element.setAttribute("width", app.canvas.width);
     app.canvas.element.setAttribute("height", app.canvas.height);
     app.canvas.element.style.backgroundColor = app.canvas.BGC;	
-	
-	
+
+
     app.canvas.handleEvent = function(e) {
         e.preventDefault();
         e.stopPropagation();
@@ -42,7 +42,7 @@ app.canvas = {
                 alert("No tool was selected");
         }		
     };
-    
+
     // Canvas event handlers start ***********************************************
 
     app.canvas.element.addEventListener("mousedown", window.app.canvas.handleEvent, false);
@@ -95,5 +95,5 @@ app.canvas = {
         return app.canvas.selectedObjects;
 
     };
-	
+
 })(window.app);
