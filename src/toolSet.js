@@ -7,10 +7,10 @@ And as soon as the selection is removed, the object is destroyed. */
 "use strict";
 
 app.toolSet = {
-	moveTool 				: {},
-	polygonTool 			: {},
-	lineTool 				: {},
-	vertexClickTolerance	: 5
+	moveTool               : {},
+	polygonTool            : {},
+	lineTool               : {},
+	vertexClickTolerance   : 5
 };
 
 
