@@ -1,4 +1,8 @@
-/* Define the action of each tool in the toolbox */
+/* Define the action of each tool in the toolbox.
+
+Each time a path element is selected, a wraper object for 
+that element is created using the 'PathObject' constructor.
+And as soon as the selection is removed, the object is destroyed. */
 
 "use strict";
 
@@ -15,11 +19,17 @@ app.toolSet = {
 	
 // Move Tool Definition Starts ***************************
 	
-	/* Each time a path element is selected, a wraper object for 
-	that element is created using the 'PathObject' constructor.
-	And as soon as the selection is removed, the object is destroyed. */
 	
 	app.toolSet.moveTool = {
+		
+		/* Each time a path element is selected, a wraper object for 
+		that element is created using the 'PathObject' constructor.
+		And as soon as the selection is removed, the object is destroyed. */
+		
+		/* MoveTool attaches a 'mousemove' event to the canvas element between
+		a 'mousedown' and 'mouseup' event on it. This prevents the objects from
+		getting dragged by other tools as the 'mousemove' event exists only when
+		moveTool is active. */
         
 		initialCoord : [],
 		
@@ -28,6 +38,7 @@ app.toolSet = {
 		},
 		
 		mousedown : function(target, s, c, a) {
+			// !important : 'a' is a coordinate array.
             
             this.initialCoord = a;
             app.canvas.element.addEventListener("mousemove", window.app.canvas.handleEvent, false);
@@ -66,14 +77,13 @@ app.toolSet = {
 						}
 					}
 					
-				} else {
+				} else { // Makes a new selection.
                     
                     let i, l, f = false;
 					
 					// This if block checkes whether the target was already selected by
 					// comparing the target with the object in the 'selectedObjs' list.
-					// If yes, it blocks the function from creating another duplicate
-					// object for the same element.
+					// If yes, the function does nothing.
 					if(app.canvas.selectedObjects) {
 						l = app.canvas.selectedObjects.length;
 						for(i = 0; i < l; i++) {
@@ -96,14 +106,18 @@ app.toolSet = {
                 x = a[0] - this.initialCoord[0],
                 y = a[1] - this.initialCoord[1];
             
-            console.log(x,y);
 			for(i = 0; i < l; i++) {
 				app.canvas.selectedObjects[i].translate(x, y);
 			}
         },
         
         mouseup : function() {
-            app.canvas.element.removeEventListener("mousemove", window.app.canvas.handleEvent, false);
+			let i, l = app.canvas.selectedObjects.length;			
+			for(i = 0; i < l; i++) {
+				app.canvas.selectedObjects[i].initiate_Translation_Data();
+			}
+			
+			app.canvas.element.removeEventListener("mousemove", window.app.canvas.handleEvent, false);
         }
 	};
 	

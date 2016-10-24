@@ -6,8 +6,8 @@
 	
 	// Path object constructor
 	app.PathObject = function(type, a) {
-        // 'type' is the type of action. Possible values
-        // are 'create' & 'assign'.
+        // 'type' is the type of action. Possible values are
+        // 'create' & 'assign'.
         // 'a' varies according to who calles the constructor.
         
 		this.element = {};
@@ -18,7 +18,7 @@
 		
 		this[type](a);
         // This function eliminates the requirement of a conditional statement.
-        // Only 'assign' operator make use of the 'coord' values.
+        // Only 'assign' function make use of the 'a' value.
 	}
 	
 	
@@ -80,13 +80,14 @@
 			}
 		},
         
+		// This function stores the current 'translate-matrix' data to a variable
+		// whenever a PathObject is created or a translation is finished.
         initiate_Translation_Data : function() {
             this.tMatrix = this.element.getAttribute("transform").slice(7,-1).split(",");
             this.translationPivot = [parseFloat(this.tMatrix[4]), parseFloat(this.tMatrix[5])];
         },
 		
 		translate : function(x, y) {
-            console.log(x,y);
             let str = "";
             
             x = this.translationPivot[0] + x;
