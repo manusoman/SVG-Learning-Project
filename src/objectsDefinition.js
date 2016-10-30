@@ -15,6 +15,12 @@
         this.tMatrix = [];
         this.translationPivot = [];
         this.initialCoord = [];
+        
+        this.fillColor = "";
+        this.fillOpacity = "";
+        this.strokeColor = "";
+        this.strokeOpacity = "";
+        this.strokeWidth = "";
 
         this[type](a);
         // This function eliminates the requirement of a conditional statement.
@@ -33,11 +39,12 @@
             this.element = document.createElementNS("http://www.w3.org/2000/svg", "path");
             this.element.id = "Layer" + (++app.appUI.layerPalette.layerIDCount);
             this.element.setAttribute("transform", "matrix(1,0,0,1,0,0)");
-            this.element.setAttribute("fill", app.appUI.fillColor);
-            this.element.setAttribute("fill-opacity", app.appUI.fillOpacity);
-            this.element.setAttribute("stroke", app.appUI.strokeColor);
-            this.element.setAttribute("stroke-opacity", app.appUI.strokeOpacity);
-            this.element.setAttribute("stroke-width", app.appUI.strokeWidth);
+            
+            this.applyColorNStroke("fillColor");
+            this.applyColorNStroke("fillOpacity");
+            this.applyColorNStroke("strokeColor");
+            this.applyColorNStroke("strokeOpacity");
+            this.applyColorNStroke("strokeWidth");
 
             this.element.setAttribute("d", ("M" + a[0] + " " + a[1]));
             // Initializes the first vertex of the path.
@@ -53,6 +60,12 @@
         and wraps it inside a PathObject.*/
         assign : function(a) { // Here, var 'a' is the currently selected path element.
             this.element = a;
+            this.fillColor = a.getAttribute("fill");
+            this.fillOpacity = a.getAttribute("fill-opacity");
+            this.strokeColor = a.getAttribute("stroke");
+            this.strokeOpacity = a.getAttribute("stroke-opacity");
+            this.strokeWidth = a.getAttribute("stroke-width");
+            
             this.initiate_Translation_Data();
         },
 
@@ -100,6 +113,30 @@
                 this.tMatrix[3] + "," + x + "," + y + ")";
 
             this.element.setAttribute("transform", str);
+        },
+        
+        applyColorNStroke : function(x) {
+            
+            switch(x) {
+                case "fillColor":
+                    this.element.setAttribute("fill", app.appUI.fillColor);
+                    this.element.setAttribute("fill-opacity", app.appUI.fillOpacity);
+                    this.fillColor = app.appUI.fillColor;
+                    this.fillOpacity = app.appUI.fillOpacity;
+                    break;
+                case "strokeColor":
+                    this.element.setAttribute("stroke", app.appUI.strokeColor);
+                    this.element.setAttribute("stroke-opacity", app.appUI.strokeOpacity);
+                    this.strokeColor = app.appUI.strokeColor;
+                    this.strokeOpacity = app.appUI.strokeOpacity;
+                    break;
+                case "strokeWidth":
+                    this.element.setAttribute("stroke-opacity", app.appUI.strokeOpacity);
+                    this.element.setAttribute("stroke-width", app.appUI.strokeWidth);
+                    this.strokeWidth = app.appUI.strokeWidth;
+                    this.strokeOpacity = app.appUI.strokeOpacity;
+                    break;
+            }
         }
     };
 
