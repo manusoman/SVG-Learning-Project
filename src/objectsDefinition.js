@@ -25,6 +25,11 @@
         this[type](a);
         // This function eliminates the requirement of a conditional statement.
         // Only 'assign' function make use of the 'a' value.
+        
+        
+        this.pathEditor.parentObject = this;
+        // this is actually a 'setter-function' which passess 
+        // the parent element to the pathEditor object.
     };
 
 
@@ -66,6 +71,7 @@
             this.strokeOpacity = a.getAttribute("stroke-opacity");
             this.strokeWidth = a.getAttribute("stroke-width");
             
+            this.pathEditor.createEditLine();
             this.initiate_Translation_Data();
         },
 
