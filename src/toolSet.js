@@ -65,7 +65,7 @@ app.toolSet = {
                     }
 
                     if(!f) {
-                        app.canvas.manageObjSelection("++", new app.PathObject("assign", target));
+                        app.canvas.manageObjSelection("++", new app.PathEditLine("assign", target));
                     }
 
                 } else if(c) { // Checks whether Ctrl-key was pressed while event.
@@ -95,7 +95,7 @@ app.toolSet = {
                     }
 
                     if(!f) {
-                        app.canvas.manageObjSelection("+", new app.PathObject("assign", target));
+                        app.canvas.manageObjSelection("+", new app.PathEditLine("assign", target));
                     }
                 }
             }
@@ -150,7 +150,7 @@ app.toolSet = {
                     
                     this.initialCoord = a;
 
-                    this.pathObj = new app.PathObject("create");
+                    this.pathObj = new app.PathEditLine("create");
                     this.pathObj.draw("M", a);
                     app.canvas.manageObjSelection("+", this.pathObj);
                 }
@@ -178,7 +178,7 @@ app.toolSet = {
                     app.canvas.manageObjSelection(false);
                     //this function removes existing selected objects if there's any.
 
-                    this.pathObj = new app.PathObject("create");
+                    this.pathObj = new app.PathEditLine("create");
                     this.pathObj.draw("M", a);
                     app.canvas.manageObjSelection("+", this.pathObj);
                 }
