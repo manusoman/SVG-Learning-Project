@@ -5,31 +5,22 @@
 (function(app) {	
 
     // Path object constructor
-    app.PathObject = function(type, a) {
-        // 'type' is the type of action. Possible values are
-        // 'create' & 'assign'.
-        // 'a' varies according to who calles the constructor.
-
+    app.PathObject = function(func, ele) {
         this.element = {};
+        this.pathData = "";
         this.startPoint = [];
         this.tMatrix = [];
         this.translationPivot = [];
-        this.initialCoord = [];
         
         this.fillColor = "";
         this.fillOpacity = "";
         this.strokeColor = "";
         this.strokeOpacity = "";
         this.strokeWidth = "";
-
-        this[type](a);
+        
+        this[func](ele);
         // This function eliminates the requirement of a conditional statement.
-        // Only 'assign' function make use of the 'a' value.
-        
-        
-        this.pathEditor.parentObject = this;
-        // this is actually a 'setter-function' which passess 
-        // the parent element to the pathEditor object.
+        // Only 'assign' function make use of the 'ele' value.
     };
 
 
@@ -37,9 +28,9 @@
     // created by the PathObject constructor.
     app.PathObject.prototype = {
         constructor : app.PathObject,
-
+        
         // 'create' function creates an SVG path.
-        create : function(a) { // Here, var 'a' is actually an array of coordinates.
+        create : function() {
 
             this.element = document.createElementNS("http://www.w3.org/2000/svg", "path");
             this.element.id = "Layer" + (++app.appUI.layerPalette.layerIDCount);
@@ -51,61 +42,69 @@
             this.applyColorNStroke("strokeOpacity");
             this.applyColorNStroke("strokeWidth");
 
-            this.element.setAttribute("d", ("M" + a[0] + " " + a[1]));
-            // Initializes the first vertex of the path.
-
             app.canvas.element.appendChild(this.element);
-
-            this.startPoint = a;
+            
             this.initiate_Translation_Data();
         },
-
-
+        
         /*'assign' function takes the currently selected path object
         and wraps it inside a PathObject.*/
-        assign : function(a) { // Here, var 'a' is the currently selected path element.
-            this.element = a;
-            this.fillColor = a.getAttribute("fill");
-            this.fillOpacity = a.getAttribute("fill-opacity");
-            this.strokeColor = a.getAttribute("stroke");
-            this.strokeOpacity = a.getAttribute("stroke-opacity");
-            this.strokeWidth = a.getAttribute("stroke-width");
+        assign : function(ele) { // Here, 'ele' is the currently selected path element.
+            this.element = ele;
+            this.fillColor = ele.getAttribute("fill");
+            this.fillOpacity = ele.getAttribute("fill-opacity");
+            this.strokeColor = ele.getAttribute("stroke");
+            this.strokeOpacity = ele.getAttribute("stroke-opacity");
+            this.strokeWidth = ele.getAttribute("stroke-width");
             
-            this.pathEditor.createEditLine();
             this.initiate_Translation_Data();
         },
-
-
-        draw : function(a) {
-            let x = a[0], y = a[1],
-                d = this.element.getAttribute("d");
-
-            /* This 'if-else' block of the polygon tool examines whether
-            the clicked point is inside the 'vertexClickTolerance' area of
-            the first vertex of the polygon. 
-            If Yes, then it closes the polygon and if Not, it continues adding
-            more and more vertex to the polygon. */
-            if((this.startPoint[0] >= (x - app.toolSet.vertexClickTolerance) &&
-              this.startPoint[0] <= (x + app.toolSet.vertexClickTolerance)) &&
-              (this.startPoint[1] >= (y - app.toolSet.vertexClickTolerance) &&
-              this.startPoint[1] <= (y + app.toolSet.vertexClickTolerance))) {
-
-                this.element.setAttribute("d", (d + " Z"));
-                return false;
+        
+        
+        // This function modifies the current path object's 'd' attribute
+        // as per the instruction given by the 'tool' object.
+        draw : function(action, coord) {
+            
+            if(coord.length > 0) {
+            
+                switch(action) {
+                    case "M":
+                        this.pathData += "M" + coord[0] + "," + coord[1];
+                        break;
+                        
+                    case "L":
+                        this.pathData += " L" + coord[0] + "," + coord[1];
+                        break;
+                        
+                    case "C":
+                        this.pathData += " C" + coord[0] + "," + coord[1] + "," +
+                                                coord[2] + "," + coord[3] + "," +
+                                                coord[4] + "," + coord[5];
+                        break;
+                        
+                    case "Z":
+                        this.pathData += " Z";
+                        break;
+                        
+                    default:
+                        console.log("Action is not specified");
+                }
+                
+                this.element.setAttribute("d", this.pathData);
+                
             } else {
-                d += " L" + x + " " + y;
-                this.element.setAttribute("d", d);
-                return this;
+                console.log("Error while drawing : Co-ordinate list is empty");
             }
         },
-
-        // This function stores the current 'translate-matrix' data to a variable
-        // whenever a PathObject is created or a translation is finished.
+        
+        
+        // This function stores the current 'translate-matrix' data to a variable.
         initiate_Translation_Data : function() {
             this.tMatrix = this.element.getAttribute("transform").slice(7,-1).split(",");
             this.translationPivot = [parseFloat(this.tMatrix[4]), parseFloat(this.tMatrix[5])];
         },
-
+        
+        
         translate : function(x, y) {
             let str = "";
 
@@ -119,7 +118,8 @@
                 this.tMatrix[3] + "," + x + "," + y + ")";
 
             this.element.setAttribute("transform", str);
-        },
+        },        
+        
         
         applyColorNStroke : function(x) {
             

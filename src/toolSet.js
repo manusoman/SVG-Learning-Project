@@ -129,18 +129,29 @@ app.toolSet = {
 
     app.toolSet.polygonTool = {
         pathObj : false,
+        initialCoord : [],
 
         doTheJob : function(type, a) {
 
             if(type === "mouseup") {
 
                 if(this.pathObj) {
-                    this.pathObj = this.pathObj.draw(a);				
+                    
+                    if(app.toolSet.checkPathCompletion(this.initialCoord, a)) {
+                        this.pathObj.draw("Z", a);
+                        this.pathObj = false;
+                    } else {
+                        this.pathObj.draw("L", a);
+                    }
+                    
                 } else {
                     app.canvas.manageObjSelection(false);
                     //this function removes existing selected objects if there's any.
+                    
+                    this.initialCoord = a;
 
-                    this.pathObj = new app.PathObject("create", a);
+                    this.pathObj = new app.PathObject("create");
+                    this.pathObj.draw("M", a);
                     app.canvas.manageObjSelection("+", this.pathObj);
                 }
             }
@@ -161,19 +172,38 @@ app.toolSet = {
             if(type === "mouseup") {
 
                 if(this.pathObj) {
-                    this.pathObj.draw(a);
+                    this.pathObj.draw("L", a);
                     this.pathObj = false;
                 } else {
                     app.canvas.manageObjSelection(false);
                     //this function removes existing selected objects if there's any.
 
-                    this.pathObj = new app.PathObject("create", a);
+                    this.pathObj = new app.PathObject("create");
+                    this.pathObj.draw("M", a);
                     app.canvas.manageObjSelection("+", this.pathObj);
                 }
             }
         }
+    };    
+    
+// Line Tool Definition Ends ***************************
+    
+    
+    /* This function examines whether the clicked point is inside the
+    'vertexClickTolerance' area of the first vertex of the path. 
+    If Yes, it returns 'true' and if Not, it returns 'false' */
+    app.toolSet.checkPathCompletion = function(startXY, endXY) {
+        let x1 = startXY[0], y1 = startXY[1],
+            x2 = endXY[0], y2 = endXY[1],
+            tmp = app.toolSet.vertexClickTolerance;
+
+        if((x1 >= x2 - tmp && x1 <= x2 + tmp) &&
+           (y1 >= y2 - tmp && y1 <= y2 + tmp)) {
+            return true;
+        } else {
+            return false;
+        }
     };
 
-// Line Tool Definition Ends ***************************
 
 })(window.app);
