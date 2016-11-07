@@ -71,7 +71,9 @@ app.canvas = {
             if(app.canvas.selectedObjects) {
                 let i = app.canvas.selectedObjects.indexOf(b),
                     t = app.canvas.selectedObjects.splice(i, 1);
-                t = null;
+                
+                t[0].removeBossElement();
+                t[0] = null;
 
                 if(app.canvas.selectedObjects.length === 0) {
                     app.canvas.manageObjSelection(false);
@@ -83,6 +85,7 @@ app.canvas = {
             if(app.canvas.selectedObjects) {
                 let i, l = app.canvas.selectedObjects.length;
                 for(i = 0; i < l; i++) {
+                    app.canvas.selectedObjects[i].removeBossElement();
                     app.canvas.selectedObjects[i] = null;
                 }
             }
