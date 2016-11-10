@@ -58,3 +58,9 @@ section.UI-1  label {
     margin-bottom: 10px;
     text-align: right;
 }
+
+.pathEditLine {
+    fill : transparent;
+    stroke : #F00;
+    stroke-width : .5;
+}
