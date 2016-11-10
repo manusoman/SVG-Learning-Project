@@ -7,6 +7,8 @@
     // Path object constructor
     app.PathObject = function(func, ele) {
         this.bossElement = {};
+        this.isClosedPath = false;
+        this.pathNodeArray = false;
         
         this.element = {};
         this.pathData = "";
@@ -30,10 +32,6 @@
     // created by the PathObject constructor.
     app.PathObject.prototype = {
         constructor : app.PathObject,
-        
-        bossEleFill : "transparent",
-        bossEleStroke : "#F00",
-        bossEleStrokeWidth : .5,
         
         // 'create' function creates an SVG path.
         create : function() {
@@ -162,9 +160,7 @@
         
         createBossElement : function(opt) {
             this.bossElement = document.createElementNS("http://www.w3.org/2000/svg", "path");
-            this.bossElement.setAttribute("fill", this.bossEleFill);
-            this.bossElement.setAttribute("stroke", this.bossEleStroke);
-            this.bossElement.setAttribute("stroke-width", this.bossEleStrokeWidth);
+            this.bossElement.setAttribute("class", "pathEditLine");
 
             let tmp = this.element.getAttribute("transform");
             this.bossElement.setAttribute("transform", tmp);
