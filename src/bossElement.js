@@ -1,9 +1,13 @@
+// test d datas :
+// M0,50 C0,0,0,0,50,0 C100,0,100,0,100,50 C100,100,100,100,50,100 C0,100,0,100,0,50 Z
+// M270.5,206 L339.5,153 L536.5,245 L329.5,353 Z
+
 "use strict";
 
 (function(app) {
     
-    app.PathObject.prototype.generatePoints = function(d) {        
-        let i, j, l, x = false, typ, tmp, nodeArray = [];
+    app.PathObject.prototype.generatePoints = function(d) {
+        let i, j, l, typ, tmp, x = false, nodeArray = [];
         
         d = d.split(" ");
         l = d.length;
@@ -40,20 +44,34 @@
                     
                     if(x) {
                         nodeArray[0][0] = nodeArray[nodeArray.length - 1][0];
+                        nodeArray.pop();
                     }
-                    nodeArray.pop();
                     this.isClosedPath = true;
                     break;
             }
         }
         
         this.pathNodeArray = [];
+        console.log(nodeArray);
         l = nodeArray.length;
         for(i = 0; i < l; i++) {
             this.pathNodeArray[i] = new window.app.Vertex();
             this.pathNodeArray[i].vData = nodeArray[i];
         }
-        
+    };
+    
+    
+    app.PathObject.prototype.generatePathData = function() {
+        let i, l = this.pathNodeArray.length, tmp, initCtrlPoint, d = "M";
+        for(i = 0; i < l; i++) {
+            tmp = this.pathNodeArray[i].vData;
+            
+            d += tmp[1][0] + "," + tmp[1][1];
+            
+            // this section needs to be developed.
+            
+        }
+        return d;
     };
     
 })(window.app);
