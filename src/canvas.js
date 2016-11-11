@@ -27,20 +27,8 @@ app.canvas = {
         let a = app.canvas.element.getBoundingClientRect(),
             x = e.clientX - a.left,
             y = e.clientY - a.top;
-
-        switch(app.appUI.toolSelected) {
-            case "moveTool":
-                app.toolSet.moveTool.doTheJob(e.target, e.type, e.shiftKey, e.ctrlKey, [x, y]);
-                break;
-            case "polygonTool":
-                app.toolSet.polygonTool.doTheJob(e.type, [x, y]);
-                break;
-            case "lineTool":
-                app.toolSet.lineTool.doTheJob(e.type, [x, y]);
-                break;
-            default :
-                alert("No tool was selected");
-        }		
+        
+        app.toolset.serveToolData(e.target, e.type, e.shiftKey, e.ctrlKey, [x, y]);
     };
 
     // Canvas event handlers start ***********************************************

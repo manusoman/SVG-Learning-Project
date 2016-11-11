@@ -16,6 +16,34 @@ app.toolSet = {
 
 
 (function(app) {
+    
+    
+    app.toolset.serveToolData = function(target, type, shiftKey, ctrlKey, coord) {
+        let initialCoord = [];
+        
+        if(type === "mousedown") {
+            initialCoord = coord;
+            app.canvas.element.addEventListener("mousemove", window.app.canvas.handleEvent, false);
+        } 
+        
+        if(type === "mouseup") {
+            app.canvas.element.removeEventListener("mousemove", window.app.canvas.handleEvent, false);
+        }
+        
+        switch(app.appUI.toolSelected) {
+            case "moveTool":
+                app.toolSet.moveTool.doTheJob(target, type, shiftKey, ctrlKey, coord);
+                break;
+            case "polygonTool":
+                app.toolSet.polygonTool.doTheJob(type, coord);
+                break;
+            case "lineTool":
+                app.toolSet.lineTool.doTheJob(type, coord);
+                break;
+            default :
+                alert("No tool was selected");
+        }
+    };
 
 // Move Tool Definition Starts ***************************
 
@@ -41,7 +69,6 @@ app.toolSet = {
             // !important : 'a' is a coordinate array.
 
             this.initialCoord = a;
-            app.canvas.element.addEventListener("mousemove", window.app.canvas.handleEvent, false);
 
             if(target === app.canvas.element) {
                 app.canvas.manageObjSelection(false);
@@ -116,8 +143,6 @@ app.toolSet = {
             for(i = 0; i < l; i++) {
                 app.canvas.selectedObjects[i].initiate_Translation_Data();
             }
-
-            app.canvas.element.removeEventListener("mousemove", window.app.canvas.handleEvent, false);
         }
     };
 
