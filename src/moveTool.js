@@ -19,21 +19,21 @@
 
             if(target === app.canvas.element) {
                 
-                app.canvas.manageObjSelection(false);
+                app.canvas.manageObjGeneration("assign", false);
                 
             } else {
 
                 if(s) { // Checks whether Shift-key was pressed while event.
                     
-                    app.canvas.manageObjSelection("++", target);
+                    app.canvas.manageObjGeneration("assign", "++", target);
 
                 } else if(c) { // Checks whether Ctrl-key was pressed while event.
                     
-                    app.canvas.manageObjSelection("--", target);
+                    app.canvas.manageObjGeneration("assign", "--", target);
 
                 } else { // Makes a new selection.
                     
-                    app.canvas.manageObjSelection("+", target);
+                    app.canvas.manageObjGeneration("assign", "+", target);
                 }
             }
         },

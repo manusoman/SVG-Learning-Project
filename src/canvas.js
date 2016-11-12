@@ -41,64 +41,92 @@ app.canvas = {
     
     
 
-    app.canvas.manageObjSelection = function(op, ele) {
-
-        if(op === "+") { // Single object selection.
+    app.canvas.manageObjGeneration = function(mode, op, ele) {
+        
+        if(mode === "assign") {
             
-            if( !this.isExistingSelection(ele) ) {
-                
-                this.manageObjSelection(false);
-                // Clears all the existing objects before a new selection is added.
+            switch(op) {
 
-                this.selectedObjects = [new app.PathObject("assign", ele)];
-            }
+                case "+": // Single object selection.
 
-        } else if(op === "++") { // Add object to existing selection.
+                    if( !this.isExistingSelection(ele) ) {
 
-            if(!this.selectedObjects) {
-                
-                this.selectedObjects = [new app.PathObject("assign", ele)];
-                
-            } else {
-                
-                if( !this.isExistingSelection(ele) ) {
-                    this.selectedObjects.push(new app.PathObject("assign", ele));
-                }
-                
-            }
+                        this.manageObjGeneration(false);
+                        // Clears all the existing objects before a new selection is added.
 
-        } else if(op === "--") { // Minus object from existing selection.
-
-            if(this.selectedObjects) {
-                
-                let obj = this.isExistingSelection(ele);
-                if(obj) {
-
-                    obj.removeBossElement();
-                    obj = null;
-
-                    if(this.selectedObjects.length === 0) {
-                        this.manageObjSelection(false);
+                        this.selectedObjects = [new app.PathObject(mode, ele)];
                     }
-                }
-            }
+                    console.log(this.selectedObjects);
+                    break;
 
-        } else { // If no selection.
+                case "++": // Add object to existing selection.
 
-            if(this.selectedObjects) {
-                let i, l = this.selectedObjects.length;
-                for(i = 0; i < l; i++) {
-                    this.selectedObjects[i].removeBossElement();
-                    this.selectedObjects[i] = null;
-                }
+                    if(!this.selectedObjects) {
+
+                        this.selectedObjects = [new app.PathObject(mode, ele)];
+
+                    } else {
+
+                        if( !this.isExistingSelection(ele) ) {
+                            this.selectedObjects.push(new app.PathObject(mode, ele));
+                        }
+                    }
+                    console.log(this.selectedObjects);
+                    break;
+
+                case "--": // Minus object from existing selection.
+
+                    if(this.selectedObjects) {
+
+                        let obj = this.isExistingSelection(ele);
+                        if(obj) {
+                            
+                            obj.removeBossElement();
+                            obj = null;
+
+                            if(this.selectedObjects.length === 0) {
+                                this.manageObjGeneration(false);
+                            }
+                        }
+                    }
+                    break;
+
+                case false : // If no selection.
+
+                    if(this.selectedObjects) {
+                        let i, l = this.selectedObjects.length;
+                        for(i = 0; i < l; i++) {
+                            this.selectedObjects[i].removeBossElement();
+                            this.selectedObjects[i] = null;
+                        }
+                    }
+                    this.selectedObjects = false;
+                    break;
+                    
+                    
+                default :
+                    console.log("Operation is not specified!");
             }
-            this.selectedObjects = false;
+            
+            
+            app.appUI.layerPalette.selectionUpdate();
+            return this.selectedObjects;
+            
+            
+        } else if(mode === "create") {
+            
+            app.canvas.manageObjGeneration("assign", false);
+            //this function removes existing selected objects if there's any.
+            
+            let newObj = new app.PathObject(mode);
+            app.canvas.selectedObjects = [newObj];
+            
+            app.appUI.layerPalette.selectionUpdate();
+            return newObj;
+            
+        } else {
+            console.log("Mode is not specified!");
         }
-
-
-        app.appUI.layerPalette.selectionUpdate();
-
-        return this.selectedObjects;
 
     };
     

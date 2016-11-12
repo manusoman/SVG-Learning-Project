@@ -45,45 +45,6 @@ app.toolSet = {
 
 
 
-
-
-// Polygon Tool Definition Starts ***************************
-
-    app.toolSet.polygonTool = {
-        pathObj : false,
-        initialCoord : [],
-
-        doTheJob : function(type, a) {
-
-            if(type === "mouseup") {
-
-                if(this.pathObj) {
-                    
-                    if(app.toolSet.checkPathCompletion(this.initialCoord, a)) {
-                        this.pathObj.draw("Z", a);
-                        this.pathObj = false;
-                    } else {
-                        this.pathObj.draw("L", a);
-                    }
-                    
-                } else {
-                    app.canvas.manageObjSelection(false);
-                    //this function removes existing selected objects if there's any.
-                    
-                    this.initialCoord = a;
-
-                    this.pathObj = new app.PathObject("create");
-                    this.pathObj.draw("M", a);
-                    app.canvas.manageObjSelection("+", this.pathObj);
-                }
-            }
-        }
-    };
-
-// Polygon Tool Definition Ends ***************************
-
-
-
 // Line Tool Definition Starts ***************************
 
     app.toolSet.lineTool = {
