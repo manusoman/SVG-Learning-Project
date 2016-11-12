@@ -28,7 +28,7 @@ app.canvas = {
             x = e.clientX - a.left,
             y = e.clientY - a.top;
         
-        app.toolset.serveToolData(e.target, e.type, e.shiftKey, e.ctrlKey, [x, y]);
+        app.toolSet.serveToolData(e.target, e.type, e.shiftKey, e.ctrlKey, e.altKey, [x, y]);
     };
 
     // Canvas event handlers start ***********************************************
@@ -37,54 +37,92 @@ app.canvas = {
     app.canvas.element.addEventListener("mouseup", window.app.canvas.handleEvent, false);
 
     // Canvas event handlers end ***********************************************
+    
+    
+    
 
-    app.canvas.manageObjSelection = function(a, b) {
-        // 'a' is the operation & 'b' is the object.
+    app.canvas.manageObjSelection = function(op, ele) {
 
-        if(a === "+") { // Single object selection.
-            app.canvas.manageObjSelection(false);
-            // Clears all the existing objects before a new selection is added.
-
-            app.canvas.selectedObjects = [b];
-
-        } else if(a === "++") { // Add object to existing selection.
-
-            if(!app.canvas.selectedObjects) {
-                app.canvas.selectedObjects = [];
-            }
-            app.canvas.selectedObjects.push(b);
-
-        } else if(a === "--") { // Minus object from existing selection.
-
-            if(app.canvas.selectedObjects) {
-                let i = app.canvas.selectedObjects.indexOf(b),
-                    t = app.canvas.selectedObjects.splice(i, 1);
+        if(op === "+") { // Single object selection.
+            
+            if( !this.isExistingSelection(ele) ) {
                 
-                t[0].removeBossElement();
-                t[0] = null;
+                this.manageObjSelection(false);
+                // Clears all the existing objects before a new selection is added.
 
-                if(app.canvas.selectedObjects.length === 0) {
-                    app.canvas.manageObjSelection(false);
+                this.selectedObjects = [new app.PathObject("assign", ele)];
+            }
+
+        } else if(op === "++") { // Add object to existing selection.
+
+            if(!this.selectedObjects) {
+                
+                this.selectedObjects = [new app.PathObject("assign", ele)];
+                
+            } else {
+                
+                if( !this.isExistingSelection(ele) ) {
+                    this.selectedObjects.push(new app.PathObject("assign", ele));
+                }
+                
+            }
+
+        } else if(op === "--") { // Minus object from existing selection.
+
+            if(this.selectedObjects) {
+                
+                let obj = this.isExistingSelection(ele);
+                if(obj) {
+
+                    obj.removeBossElement();
+                    obj = null;
+
+                    if(this.selectedObjects.length === 0) {
+                        this.manageObjSelection(false);
+                    }
                 }
             }
 
         } else { // If no selection.
 
-            if(app.canvas.selectedObjects) {
-                let i, l = app.canvas.selectedObjects.length;
+            if(this.selectedObjects) {
+                let i, l = this.selectedObjects.length;
                 for(i = 0; i < l; i++) {
-                    app.canvas.selectedObjects[i].removeBossElement();
-                    app.canvas.selectedObjects[i] = null;
+                    this.selectedObjects[i].removeBossElement();
+                    this.selectedObjects[i] = null;
                 }
             }
-            app.canvas.selectedObjects = false;
+            this.selectedObjects = false;
         }
 
 
         app.appUI.layerPalette.selectionUpdate();
 
-        return app.canvas.selectedObjects;
+        return this.selectedObjects;
 
+    };
+    
+    
+    
+    
+    // This function tells whether the object passed is already
+    // selected or not.
+    app.canvas.isExistingSelection = function(ele) {
+        
+        if(this.selectedObjects) {
+            
+            let i, l = this.selectedObjects.length;
+            for(i = 0; i < l; i++) {
+                if(ele === this.selectedObjects[i].bossElement) {
+
+                    let n = this.selectedObjects.indexOf(this.selectedObjects[i]),
+                        t = this.selectedObjects.splice(n, 1);
+
+                    return t[0];
+                }
+            }
+        }
+        return false;
     };
 
 })(window.app);
