@@ -51,12 +51,11 @@ app.canvas = {
 
                     if( !this.isExistingSelection(ele) ) {
 
-                        this.manageObjGeneration(false);
+                        this.manageObjGeneration("assign", false);
                         // Clears all the existing objects before a new selection is added.
 
                         this.selectedObjects = [new app.PathObject(mode, ele)];
                     }
-                    console.log(this.selectedObjects);
                     break;
 
                 case "++": // Add object to existing selection.
@@ -71,7 +70,6 @@ app.canvas = {
                             this.selectedObjects.push(new app.PathObject(mode, ele));
                         }
                     }
-                    console.log(this.selectedObjects);
                     break;
 
                 case "--": // Minus object from existing selection.
@@ -81,11 +79,14 @@ app.canvas = {
                         let obj = this.isExistingSelection(ele);
                         if(obj) {
                             
-                            obj.removeBossElement();
-                            obj = null;
+                            let n = this.selectedObjects.indexOf(obj),
+                            t = this.selectedObjects.splice(n, 1);
+                            
+                            t[0].removeBossElement();
+                            t[0] = null;
 
                             if(this.selectedObjects.length === 0) {
-                                this.manageObjGeneration(false);
+                                this.manageObjGeneration("assign", false);
                             }
                         }
                     }
@@ -142,11 +143,8 @@ app.canvas = {
             let i, l = this.selectedObjects.length;
             for(i = 0; i < l; i++) {
                 if(ele === this.selectedObjects[i].bossElement) {
-
-                    let n = this.selectedObjects.indexOf(this.selectedObjects[i]),
-                        t = this.selectedObjects.splice(n, 1);
-
-                    return t[0];
+                    
+                    return this.selectedObjects[i];
                 }
             }
         }
