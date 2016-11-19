@@ -61,9 +61,16 @@
     };
     
     
+    
+    
+    
     app.PathObject.prototype.generatePathData = function() {
-        let i, j, l = this.pathNodeArray.length, tmp0, tmp1, initCtrlPoint, d = "M";
+        
+        let i, j, tmp0, tmp1, initCtrlPoint,
+            l = this.pathNodeArray.length, d = "M";
+        
         for(i = 0; i < l; i++) {
+            
             tmp1 = this.pathNodeArray[i].vData;
             j = i - 1;
             
@@ -75,8 +82,9 @@
             } else {
                 
                 tmp0 = this.pathNodeArray[j].vData;
+                
                 if(!tmp0[2] && !tmp1[0]) {
-                    d += " L" + tmp1[0][0] + "," + tmp1[0][1];
+                    d += " L" + tmp1[1][0] + "," + tmp1[1][1];
                 } else {
                     tmp0[2] = tmp0[2] ? tmp0[2] : tmp0[1];
                     
@@ -95,5 +103,9 @@
         
         return d;
     };
+    
+    
+    
+    
     
 })(window.app);

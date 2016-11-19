@@ -75,7 +75,7 @@ app.toolSet = {
     /* This function examines whether the clicked point is inside the
     'vertexClickTolerance' area of the first vertex of the path. 
     If Yes, it returns 'true' and if Not, it returns 'false' */
-    app.toolSet.checkPathCompletion = function(startXY, endXY) {
+    /*app.toolSet.checkPathCompletion = function(startXY, endXY) {
         let x1 = startXY[0], y1 = startXY[1],
             x2 = endXY[0], y2 = endXY[1],
             tmp = app.toolSet.vertexClickTolerance;
@@ -86,7 +86,7 @@ app.toolSet = {
         } else {
             return false;
         }
-    };
+    };*/
 
 
 })(window.app);

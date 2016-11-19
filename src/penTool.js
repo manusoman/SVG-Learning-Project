@@ -4,7 +4,7 @@
 (function(app) {    
     
 
-    app.toolSet.polygonTool = {
+    app.toolSet.penTool = {
         pathObj : false,
 
         doTheJob : function(type, coord) {

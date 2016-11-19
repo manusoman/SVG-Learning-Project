@@ -43,11 +43,11 @@
             this.element.setAttribute("d", "");
             this.element.setAttribute("transform", "matrix(1,0,0,1,0,0)");
             
-            this.applyColorNStroke("fillColor");
-            this.applyColorNStroke("fillOpacity");
-            this.applyColorNStroke("strokeColor");
-            this.applyColorNStroke("strokeOpacity");
-            this.applyColorNStroke("strokeWidth");
+            this.copyColorNStroke("set", "fillColor");
+            this.copyColorNStroke("set", "fillOpacity");
+            this.copyColorNStroke("set", "strokeColor");
+            this.copyColorNStroke("set", "strokeOpacity");
+            this.copyColorNStroke("set", "strokeWidth");
 
             app.canvas.element.appendChild(this.element);
             
@@ -70,6 +70,13 @@
         
         
         
+        removeBossElement : function() {
+            this.bossElement.parentElement.removeChild(this.bossElement);
+        },
+        
+        
+        
+        
         assign : function(ele) {
             this.element = ele;            
             this.createBossElement();
@@ -82,23 +89,51 @@
         
         draw : function(vData) {
             let d, tmp = new app.Vertex();
-            tmp.vData = vData;
             
             if(!this.pathNodeArray) {
                 this.pathNodeArray = [];                
+            } else {
+                
+                let flag = this.checkPathCompletion(vData[1]);
+                
+                if(flag) {                
+                    vData[1] = flag;
+                    this.isClosedPath = true;
+                }                
             }
             
+            tmp.vData = vData;
             this.pathNodeArray.push(tmp);
             
             d = this.generatePathData();
             this.bossElement.setAttribute("d", d);
+            this.passElementAttributes(this.bossElement, this.element, "d");
+            
+            return this.isClosedPath;
+        },
+        
+        
+        
+        
+        checkPathCompletion : function(EVdata) {            
+            let tmp = app.toolSet.vertexClickTolerance,
+                IVdata = this.pathNodeArray[0].vData[1],
+                x1 = IVdata[0], y1 = IVdata[1],
+                x2 = EVdata[0], y2 = EVdata[1];
+
+            if((x1 >= x2 - tmp && x1 <= x2 + tmp) &&
+               (y1 >= y2 - tmp && y1 <= y2 + tmp)) {
+                return [IVdata];
+            } else {
+                return false;
+            }
         },
         
         
         
         
         initiate_Translation_Data : function() {
-            this.tMatrix = this.bossElement.getAttribute("transform").slice(7,-1).split(",");
+            this.tMatrix = this.bossElement.getAttribute("transform").slice(7, -1).split(",");
             this.translationPivot = [parseFloat(this.tMatrix[4]), parseFloat(this.tMatrix[5])];
         },
         
