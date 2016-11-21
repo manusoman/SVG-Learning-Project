@@ -35,6 +35,9 @@ app.toolSet = {
             case "polygonTool":
                 app.toolSet.polygonTool.doTheJob(type, coord);
                 break;
+            case "penTool":
+                app.toolSet.penTool.doTheJob(type, coord);
+                break;
             case "lineTool":
                 app.toolSet.lineTool.doTheJob(type, coord);
                 break;

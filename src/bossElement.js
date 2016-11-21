@@ -86,14 +86,14 @@
                 if(!tmp0[2] && !tmp1[0]) {
                     d += " L" + tmp1[1][0] + "," + tmp1[1][1];
                 } else {
-                    tmp0[2] = tmp0[2] ? tmp0[2] : tmp0[1];
                     
-                    d += " C" + tmp0[2][0] + "," + tmp0[2][1] +
-                                tmp1[0][0] + "," + tmp1[0][1] +
+                    tmp0[2] = tmp0[2] ? tmp0[2] : tmp0[1];
+                    tmp1[0] = tmp1[0] ? tmp1[0] : tmp1[1];
+                    
+                    d += " C" + tmp0[2][0] + "," + tmp0[2][1] + "," +
+                                tmp1[0][0] + "," + tmp1[0][1] + "," +
                                 tmp1[1][0] + "," + tmp1[1][1];
                 }
-                
-                // this section needs to be developed....
             }
         }
         

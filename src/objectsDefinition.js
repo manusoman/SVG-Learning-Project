@@ -87,23 +87,40 @@
         
         
         
-        draw : function(vData) {
-            let d, tmp = new app.Vertex();
+        draw : function(type, vData) {
+            let d, tmp, flag = false;
             
-            if(!this.pathNodeArray) {
-                this.pathNodeArray = [];                
+            if(type === "vertex") {
+                
+                if(!this.pathNodeArray) {                
+                    this.pathNodeArray = [];
+                    flag = true;
+
+                } else {                
+                    let x = this.checkPathCompletion(vData[1]);
+
+                    if(x) {
+                        this.isClosedPath = true;
+                    } else {
+                        flag = true;
+                    }
+
+                }
+
+                if(flag) {
+                    tmp = new app.Vertex();
+                    tmp.vData = vData;
+                    this.pathNodeArray.push(tmp);
+                }
+                
+            } else if(type === "cPoint") {
+                
+                let l = this.pathNodeArray.length;
+                this.pathNodeArray[l - 1].vData = vData;
+                
             } else {
-                
-                let flag = this.checkPathCompletion(vData[1]);
-                
-                if(flag) {                
-                    vData[1] = flag;
-                    this.isClosedPath = true;
-                }                
+                console.log("Custom Error: Mouse event type is not understood!");
             }
-            
-            tmp.vData = vData;
-            this.pathNodeArray.push(tmp);
             
             d = this.generatePathData();
             this.bossElement.setAttribute("d", d);
