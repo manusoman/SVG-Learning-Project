@@ -98,6 +98,20 @@
         }
         
         if(this.isClosedPath) {
+            
+            tmp0 = this.pathNodeArray[l - 1].vData;
+            tmp1 = this.pathNodeArray[0].vData;
+            
+            if(!tmp0[2] || !tmp1[0]) {
+                
+                tmp0[2] = tmp0[2] ? tmp0[2] : tmp0[1];
+                tmp1[0] = tmp1[0] ? tmp1[0] : tmp1[1];
+
+                d += " C" + tmp0[2][0] + "," + tmp0[2][1] + "," +
+                            tmp1[0][0] + "," + tmp1[0][1] + "," +
+                            tmp1[1][0] + "," + tmp1[1][1];
+            }
+            
             d += " Z";
         }
         

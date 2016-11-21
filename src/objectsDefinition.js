@@ -90,7 +90,62 @@
         draw : function(type, vData) {
             let d, tmp, flag = false;
             
-            if(type === "vertex") {
+            if(type === "create") {
+                
+                if(!this.pathNodeArray) {                
+                    this.pathNodeArray = [];
+                    flag = true;
+
+                } else {
+
+                    if(this.checkPathCompletion(vData[1])) {
+                        
+                        this.isClosedPath = true;
+                        
+                    } else {
+                        flag = true;
+                    }
+
+                }
+
+                if(flag) {
+                    tmp = new app.Vertex();
+                    tmp.vData = vData;
+                    this.pathNodeArray.push(tmp);
+                }
+                
+            } else if(type === "manip") {
+                
+                if(this.isClosedPath) {
+                    let l = this.pathNodeArray.length,
+                        lastVtxVdata = this.pathNodeArray[l - 1].vData;
+                    
+                    if(vData[2] || lastVtxVdata[2]) {
+                        console.log("balfajdsf;a");
+                        this.pathNodeArray[0].vData[0] = vData[0];
+                    }
+                    
+                } else {                
+                    let l = this.pathNodeArray.length;
+                    this.pathNodeArray[l - 1].vData = vData;
+                }
+                
+            } else {
+                console.log("Custom Error: Mouse event type is not understood!");
+            }
+            
+            d = this.generatePathData();
+            this.bossElement.setAttribute("d", d);
+            this.passElementAttributes(this.bossElement, this.element, "d");
+        },
+        
+        
+        
+        
+        /*draw : function(type, vData) {
+            let d, tmp, flag = false;
+            
+            if(type === "create") {
                 
                 if(!this.pathNodeArray) {                
                     this.pathNodeArray = [];
@@ -113,7 +168,7 @@
                     this.pathNodeArray.push(tmp);
                 }
                 
-            } else if(type === "cPoint") {
+            } else if(type === "manip") {
                 
                 let l = this.pathNodeArray.length;
                 this.pathNodeArray[l - 1].vData = vData;
@@ -127,7 +182,7 @@
             this.passElementAttributes(this.bossElement, this.element, "d");
             
             return this.isClosedPath;
-        },
+        },*/
         
         
         
@@ -140,7 +195,9 @@
 
             if((x1 >= x2 - tmp && x1 <= x2 + tmp) &&
                (y1 >= y2 - tmp && y1 <= y2 + tmp)) {
+                
                 return [IVdata];
+                
             } else {
                 return false;
             }
