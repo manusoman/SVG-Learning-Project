@@ -102,7 +102,7 @@
             tmp0 = this.pathNodeArray[l - 1].vData;
             tmp1 = this.pathNodeArray[0].vData;
             
-            if(!tmp0[2] || !tmp1[0]) {
+            if(tmp0[2] || tmp1[0]) {
                 
                 tmp0[2] = tmp0[2] ? tmp0[2] : tmp0[1];
                 tmp1[0] = tmp1[0] ? tmp1[0] : tmp1[1];

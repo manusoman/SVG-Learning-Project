@@ -4,9 +4,10 @@
 (function(app) {
     
     
-    app.toolSet.polygonTool = {
-        pathObj : false,
-        vertex  : false,
+    app.toolSet.lineTool = {
+        pathObj     : false,
+        vertex      : false,
+        vertexCount : 0,
 
         doTheJob : function(type, coord) {
             
@@ -28,9 +29,11 @@
                 
             } else if(type === "mouseup") {
                 this.vertex = false;
+                this.vertexCount++;
                 
-                if(this.pathObj.isClosedPath) {
+                if(this.vertexCount === 2) {
                     this.pathObj = false;
+                    this.vertexCount = 0;
                 }
                 
             } else {

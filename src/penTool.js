@@ -21,7 +21,7 @@
                 
             } else if(type === "mousemove") {
                 
-                if(this.vertex) {
+                if(this.vertex) { // checks whether "mousedown" event happened before "mousemove".
                     let lcp = [];
 
                     lcp[0] = this.vertex[0] + (this.vertex[0] - coord[0]);
