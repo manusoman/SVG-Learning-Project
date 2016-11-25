@@ -64,12 +64,11 @@
         // has changed and passess the changed property to the PathObjects
         // so that they can udate that particular property of theirs.
         passColorNStroke : function(x) {
-            let i, l;
             
             if(app.canvas.selectedObjects) {
-                l = app.canvas.selectedObjects.length;                
-                for(i = 0; i < l; i++) {
-                    app.canvas.selectedObjects[i].applyColorNStroke(x);
+                let l = app.canvas.selectedObjects.length;                
+                for(let i = 0; i < l; i++) {
+                    app.canvas.selectedObjects[i].copyColorNStroke("set", x);
                 }                
             }
         }

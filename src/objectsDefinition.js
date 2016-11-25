@@ -218,7 +218,7 @@
                 this.strokeWidth = this.element.getAttribute("stroke-width");
                 
             } else {
-                console.log("Custom-error : Choose an option!");
+                console.log("Custom-error : Choose an option (set or get)!");
             }
         },
         
