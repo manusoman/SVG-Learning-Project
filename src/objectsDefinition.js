@@ -7,12 +7,14 @@
     // Path object constructor
     app.PathObject = function(func, ele) {
         this.bossElement = {};
+        this.pathEditline = {};
+        
         this.isClosedPath = false;
         this.pathNodeArray = false;
         
         this.element = {};
-        this.pathData = "";
-        this.startPoint = [];
+        //this.pathData = "";
+        //this.startPoint = [];
         this.tMatrix = [];
         this.translationPivot = [];
         
@@ -58,11 +60,15 @@
         
         
         createBossElement : function() {
-            this.bossElement = document.createElementNS("http://www.w3.org/2000/svg", "path");
-            this.bossElement.setAttribute("class", "pathEditLine");
-            this.passElementAttributes(this.element, this.bossElement, "d");
+            this.bossElement = document.createElementNS("http://www.w3.org/2000/svg", "g");
+            this.bossElement.setAttribute("class", "bossElement");
             this.passElementAttributes(this.element, this.bossElement, "transform");
             
+            this.pathEditline = document.createElementNS("http://www.w3.org/2000/svg", "path");
+            this.pathEditline.setAttribute("class", "pathEditLine");            
+            this.passElementAttributes(this.element, this.pathEditline, "d");
+            
+            this.bossElement.appendChild(this.pathEditline);
             app.canvas.element.appendChild(this.bossElement);
             this.initiate_Translation_Data();
         },
@@ -80,6 +86,7 @@
         assign : function(ele) {
             this.element = ele;            
             this.createBossElement();
+            this.generatePoints(ele.getAttribute("d"));
             
             this.copyColorNStroke("get");
         },
@@ -102,6 +109,14 @@
                         
                         this.isClosedPath = true;
                         
+                    //***********************************************************
+                    // The tmp variable is required to assign vData
+                    // because, vData of the vertex object is a setter function.
+                        let tmp = this.pathNodeArray[0].vData;
+                        tmp[0] = vData[0];
+                        this.pathNodeArray[0].vData = tmp;
+                    //***********************************************************
+                        
                     } else {
                         flag = true;
                     }
@@ -109,7 +124,7 @@
                 }
 
                 if(flag) {
-                    tmp = new app.Vertex();
+                    tmp = new app.Vertex(this.bossElement);
                     tmp.vData = vData;
                     this.pathNodeArray.push(tmp);
                 }
@@ -117,12 +132,14 @@
             } else if(type === "manip") {
                 
                 if(this.isClosedPath) {
-                    let l = this.pathNodeArray.length,
-                        lastVtxVdata = this.pathNodeArray[l - 1].vData;
                     
-                    if(vData[2] || lastVtxVdata[2]) {
-                        this.pathNodeArray[0].vData[0] = vData[0];
-                    }
+                //***********************************************************
+                // The tmp variable is required to assign vData
+                // because, vData of the vertex object is a setter function.
+                    let tmp = this.pathNodeArray[0].vData;
+                    tmp[0] = vData[0];
+                    this.pathNodeArray[0].vData = tmp;
+                //***********************************************************
                     
                 } else {                
                     let l = this.pathNodeArray.length;
@@ -134,8 +151,8 @@
             }
             
             d = this.generatePathData();
-            this.bossElement.setAttribute("d", d);
-            this.passElementAttributes(this.bossElement, this.element, "d");
+            this.pathEditline.setAttribute("d", d);
+            this.passElementAttributes(this.pathEditline, this.element, "d");
         },
         
         
@@ -186,6 +203,13 @@
         
         
         
+        update_Element_Translation : function() {
+            this.passElementAttributes(this.bossElement, this.element, "transform");
+        },
+        
+        
+        
+        
         copyColorNStroke : function(opt, attr) {
             
             if(opt === "set") {
@@ -229,6 +253,8 @@
             let tmp = source.getAttribute(attr);
             destn.setAttribute(attr, tmp);
         }
+        
+        
     };
 
 })(window.app);

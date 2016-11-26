@@ -7,6 +7,7 @@
     app.toolSet.moveTool = {
 
         initialCoord : [],
+        wasMouseDragged : false,
 
         doTheJob : function(target, type, shiftKey, ctrlKey, coord) {
             this[type](target, shiftKey, ctrlKey, coord);
@@ -46,13 +47,22 @@
             for(i = 0; i < l; i++) {
                 app.canvas.selectedObjects[i].translate(x, y);
             }
+            
+            this.wasMouseDragged = true;
         },
 
         mouseup : function() {
-            let i, l = app.canvas.selectedObjects.length;			
-            for(i = 0; i < l; i++) {
-                app.canvas.selectedObjects[i].initiate_Translation_Data();
+            
+            if(this.wasMouseDragged) { // Checks whether mouse was dragged.
+                
+                let i, l = app.canvas.selectedObjects.length;			
+                for(i = 0; i < l; i++) {
+                    app.canvas.selectedObjects[i].initiate_Translation_Data();
+                    app.canvas.selectedObjects[i].update_Element_Translation();
+                }
             }
+            
+            this.wasMouseDragged = false;
         }
     };
     

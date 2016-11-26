@@ -22,7 +22,7 @@
             } else if(type === "mousemove") {
                 
                 if(this.vertex) { // checks whether "mousedown" event happened before "mousemove".
-                    let lcp = [];
+                    let lcp = []; // lcp is left-control-point.
 
                     lcp[0] = this.vertex[0] + (this.vertex[0] - coord[0]);
                     lcp[1] = this.vertex[1] + (this.vertex[1] - coord[1]);

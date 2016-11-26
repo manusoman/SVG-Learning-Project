@@ -142,7 +142,7 @@ app.canvas = {
             
             let i, l = this.selectedObjects.length;
             for(i = 0; i < l; i++) {
-                if(ele === this.selectedObjects[i].bossElement) {
+                if(ele === this.selectedObjects[i].pathEditline) {
                     
                     return this.selectedObjects[i];
                 }

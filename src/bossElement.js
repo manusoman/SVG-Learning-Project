@@ -52,10 +52,9 @@
         }
         
         this.pathNodeArray = [];
-        console.log(nodeArray);
         l = nodeArray.length;
         for(i = 0; i < l; i++) {
-            this.pathNodeArray[i] = new window.app.Vertex();
+            this.pathNodeArray[i] = new app.Vertex(this.bossElement);
             this.pathNodeArray[i].vData = nodeArray[i];
         }
     };
