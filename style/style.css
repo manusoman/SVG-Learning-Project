@@ -59,6 +59,11 @@ section.UI-1  label {
     text-align: right;
 }
 
+svg#Canvas .moveToolDragSelection {    
+    stroke: #888;
+    fill: #DDD;    
+}
+
 .bossElement {
     stroke : #F00;
     stroke-width : .5;
