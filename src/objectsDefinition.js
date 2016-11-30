@@ -95,35 +95,28 @@
         
         
         draw : function(type, vData) {
-            let d, tmp, flag = false;
+            let tmp;
             
             if(type === "create") {
-                
-                if(!this.pathNodeArray) {                
-                    this.pathNodeArray = [];
-                    flag = true;
+
+                if(this.checkPathCompletion(vData[1])) {
+
+                    this.isClosedPath = true;
+
+                //***********************************************************
+                // The tmp variable is required to assign vData
+                // because, vData of the vertex object is a setter function.
+                    let tmp = this.pathNodeArray[0].vData;
+                    tmp[0] = vData[0];
+                    this.pathNodeArray[0].vData = tmp;
+                //***********************************************************
 
                 } else {
 
-                    if(this.checkPathCompletion(vData[1])) {
-                        
-                        this.isClosedPath = true;
-                        
-                    //***********************************************************
-                    // The tmp variable is required to assign vData
-                    // because, vData of the vertex object is a setter function.
-                        let tmp = this.pathNodeArray[0].vData;
-                        tmp[0] = vData[0];
-                        this.pathNodeArray[0].vData = tmp;
-                    //***********************************************************
-                        
-                    } else {
-                        flag = true;
+                    if(!this.pathNodeArray) {                
+                        this.pathNodeArray = [];
                     }
 
-                }
-
-                if(flag) {
                     tmp = new app.Vertex(this.bossElement);
                     tmp.vData = vData;
                     this.pathNodeArray.push(tmp);
@@ -150,28 +143,31 @@
                 console.log("Custom Error: Mouse event type is not understood!");
             }
             
-            d = this.generatePathData();
-            this.pathEditline.setAttribute("d", d);
+            this.pathEditline.setAttribute("d", this.generatePathData());
             this.passElementAttributes(this.pathEditline, this.element, "d");
         },
         
         
         
         
-        checkPathCompletion : function(EVdata) {            
-            let tmp = app.toolSet.vertexClickTolerance,
-                IVdata = this.pathNodeArray[0].vData[1],
-                x1 = IVdata[0], y1 = IVdata[1],
-                x2 = EVdata[0], y2 = EVdata[1];
+        checkPathCompletion : function(EVdata) {
+            
+            if(this.pathNodeArray) {
+                
+                let tmp = app.toolSet.vertexClickTolerance,
+                    IVdata = this.pathNodeArray[0].vData[1],
+                    x1 = IVdata[0], y1 = IVdata[1],
+                    x2 = EVdata[0], y2 = EVdata[1];
 
-            if((x1 >= x2 - tmp && x1 <= x2 + tmp) &&
-               (y1 >= y2 - tmp && y1 <= y2 + tmp)) {
-                
-                return [IVdata];
-                
-            } else {
-                return false;
+                if((x1 >= x2 - tmp && x1 <= x2 + tmp) &&
+                   (y1 >= y2 - tmp && y1 <= y2 + tmp)) {
+
+                    return [IVdata];
+
+                }
             }
+            
+            return false;
         },
         
         

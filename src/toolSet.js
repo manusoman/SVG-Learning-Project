@@ -10,7 +10,8 @@ app.toolSet = {
     moveTool               : {},
     polygonTool            : {},
     lineTool               : {},
-    vertexClickTolerance   : 5
+    vertexClickTolerance   : 5,
+    dragSelectRect         : false
 };
 
 
@@ -44,6 +45,58 @@ app.toolSet = {
             default :
                 alert("No tool was selected");
         }
+    };
+    
+    
+    
+    app.toolSet.dragSelect = function(eType, SPC, EPC) {
+        // SPC > Start Point Coordinate
+        // EPC > End Point Coordinate
+        
+        if(eType === "mousedown") {
+            
+            this.dragSelectRect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+            app.canvas.element.appendChild(this.dragSelectRect);
+            
+        } else if(eType === "mousemove") {
+            
+            if(this.dragSelectRect) {
+                
+                let width = EPC[0] - SPC[0],
+                    height = EPC[1] - SPC[1];                
+                
+                if(width < 0) {
+                    width = Math.abs(width);
+                    SPC[0] = EPC[0];
+                }
+                if(height < 0) {
+                    height = Math.abs(height);
+                    SPC[1] = EPC[1];
+                }
+                /*if(width < 0 || height < 0) {
+                    width = Math.abs(width);
+                    height = Math.abs(height);
+                    SPC = EPC;
+                }*/
+                
+                this.dragSelectRect.setAttribute("x", SPC[0]);
+                this.dragSelectRect.setAttribute("y", SPC[1]);
+                this.dragSelectRect.setAttribute("width", width);
+                this.dragSelectRect.setAttribute("height", height);
+            }
+            
+        } else if(eType === "mouseup") {
+            
+            if(this.dragSelectRect) {
+                app.canvas.element.removeChild(this.dragSelectRect);
+                this.dragSelectRect = false;
+            }
+            
+        } else {
+            console.log("Custom Error: No valid arguments!");
+        }
+        
+        return this.dragSelectRect;
     };
 
 
