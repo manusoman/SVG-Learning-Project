@@ -1,6 +1,7 @@
 "use strict";
 
 app.canvas = {
+    spc : [],
     element         : document.getElementById("Canvas"),
 
     width           : 800,
@@ -27,21 +28,20 @@ app.canvas = {
         let a = app.canvas.element.getBoundingClientRect(),
             x = e.clientX - a.left,
             y = e.clientY - a.top;
-
-        switch(app.appUI.toolSelected) {
-            case "moveTool":
-                app.toolSet.moveTool.doTheJob(e.target, e.type, e.shiftKey, e.ctrlKey, [x, y]);
-                break;
-            case "polygonTool":
-                app.toolSet.polygonTool.doTheJob(e.type, [x, y]);
-                break;
-            case "lineTool":
-                app.toolSet.lineTool.doTheJob(e.type, [x, y]);
-                break;
-            default :
-                alert("No tool was selected");
-        }		
+        
+        
+        /*if(e.type === "mousedown") {
+            app.canvas.spc = [x, y];
+        }
+        console.clear();
+        console.log(app.canvas.spc);
+        console.log([x, y]);*/
+        
+        app.toolSet.serveToolData(e.target, e.type, e.shiftKey, e.ctrlKey, e.altKey, [x, y]);
     };
+    
+    
+    
 
     // Canvas event handlers start ***********************************************
 
@@ -49,51 +49,118 @@ app.canvas = {
     app.canvas.element.addEventListener("mouseup", window.app.canvas.handleEvent, false);
 
     // Canvas event handlers end ***********************************************
+    
+    
+    
 
-    app.canvas.manageObjSelection = function(a, b) {
-        // 'a' is the operation & 'b' is the object.
+    app.canvas.manageObjGeneration = function(mode, op, ele) {
+        
+        if(mode === "assign") {
+            
+            switch(op) {
 
-        if(a === "+") { // Single object selection.
-            app.canvas.manageObjSelection(false);
-            // Clears all the existing objects before a new selection is added.
+                case "+": // Single object selection.
 
-            app.canvas.selectedObjects = [b];
+                    if( !this.isExistingSelection(ele) ) {
 
-        } else if(a === "++") { // Add object to existing selection.
+                        this.manageObjGeneration("assign", false);
+                        // Clears all the existing objects before a new selection is added.
 
-            if(!app.canvas.selectedObjects) {
-                app.canvas.selectedObjects = [];
+                        this.selectedObjects = [new app.PathObject(mode, ele)];
+                    }
+                    break;
+
+                case "++": // Add object to existing selection.
+
+                    if(!this.selectedObjects) {
+
+                        this.selectedObjects = [new app.PathObject(mode, ele)];
+
+                    } else {
+
+                        if( !this.isExistingSelection(ele) ) {
+                            this.selectedObjects.push(new app.PathObject(mode, ele));
+                        }
+                    }
+                    break;
+
+                case "--": // Minus object from existing selection.
+
+                    if(this.selectedObjects) {
+
+                        let obj = this.isExistingSelection(ele);
+                        if(obj) {
+                            
+                            let n = this.selectedObjects.indexOf(obj),
+                            t = this.selectedObjects.splice(n, 1);
+                            
+                            t[0].removeBossElement();
+                            t[0] = null;
+
+                            if(this.selectedObjects.length === 0) {
+                                this.manageObjGeneration("assign", false);
+                            }
+                        }
+                    }
+                    break;
+
+                case false : // If no selection.
+
+                    if(this.selectedObjects) {
+                        let i, l = this.selectedObjects.length;
+                        for(i = 0; i < l; i++) {
+                            this.selectedObjects[i].removeBossElement();
+                            this.selectedObjects[i] = null;
+                        }
+                    }
+                    this.selectedObjects = false;
+                    break;
+                    
+                    
+                default :
+                    console.log("Operation is not specified!");
             }
-            app.canvas.selectedObjects.push(b);
-
-        } else if(a === "--") { // Minus object from existing selection.
-
-            if(app.canvas.selectedObjects) {
-                let i = app.canvas.selectedObjects.indexOf(b),
-                    t = app.canvas.selectedObjects.splice(i, 1);
-                t = null;
-
-                if(app.canvas.selectedObjects.length === 0) {
-                    app.canvas.manageObjSelection(false);
-                }
-            }
-
-        } else { // If no selection.
-
-            if(app.canvas.selectedObjects) {
-                let i, l = app.canvas.selectedObjects.length;
-                for(i = 0; i < l; i++) {
-                    app.canvas.selectedObjects[i] = null;
-                }
-            }
-            app.canvas.selectedObjects = false;
+            
+            
+            app.appUI.layerPalette.selectionUpdate();
+            return this.selectedObjects;
+            
+            
+        } else if(mode === "create") {
+            
+            app.canvas.manageObjGeneration("assign", false);
+            //this function removes existing selected objects if there's any.
+            
+            let newObj = new app.PathObject(mode);
+            app.canvas.selectedObjects = [newObj];
+            
+            app.appUI.layerPalette.selectionUpdate();
+            return newObj;
+            
+        } else {
+            console.log("Mode is not specified!");
         }
 
-
-        app.appUI.layerPalette.selectionUpdate();
-
-        return app.canvas.selectedObjects;
-
+    };
+    
+    
+    
+    
+    // This function tells whether the object passed is already
+    // selected or not.
+    app.canvas.isExistingSelection = function(ele) {
+        
+        if(this.selectedObjects) {
+            
+            let i, l = this.selectedObjects.length;
+            for(i = 0; i < l; i++) {
+                if(ele === this.selectedObjects[i].pathEditline) {
+                    
+                    return this.selectedObjects[i];
+                }
+            }
+        }
+        return false;
     };
 
 })(window.app);

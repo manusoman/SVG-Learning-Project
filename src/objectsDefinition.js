@@ -6,9 +6,15 @@
 
     // Path object constructor
     app.PathObject = function(func, ele) {
+        this.bossElement = {};
+        this.pathEditline = {};
+        
+        this.isClosedPath = false;
+        this.pathNodeArray = false;
+        
         this.element = {};
-        this.pathData = "";
-        this.startPoint = [];
+        //this.pathData = "";
+        //this.startPoint = [];
         this.tMatrix = [];
         this.translationPivot = [];
         
@@ -27,82 +33,152 @@
     // Defining the prototype of every objects 
     // created by the PathObject constructor.
     app.PathObject.prototype = {
+        
         constructor : app.PathObject,
         
-        // 'create' function creates an SVG path.
+        
+        
+        
         create : function() {
-
             this.element = document.createElementNS("http://www.w3.org/2000/svg", "path");
             this.element.id = "Layer" + (++app.appUI.layerPalette.layerIDCount);
+            this.element.setAttribute("d", "");
             this.element.setAttribute("transform", "matrix(1,0,0,1,0,0)");
             
-            this.applyColorNStroke("fillColor");
-            this.applyColorNStroke("fillOpacity");
-            this.applyColorNStroke("strokeColor");
-            this.applyColorNStroke("strokeOpacity");
-            this.applyColorNStroke("strokeWidth");
+            this.copyColorNStroke("set", "fillColor");
+            this.copyColorNStroke("set", "fillOpacity");
+            this.copyColorNStroke("set", "strokeColor");
+            this.copyColorNStroke("set", "strokeOpacity");
+            this.copyColorNStroke("set", "strokeWidth");
 
             app.canvas.element.appendChild(this.element);
             
-            this.initiate_Translation_Data();
-        },
-        
-        /*'assign' function takes the currently selected path object
-        and wraps it inside a PathObject.*/
-        assign : function(ele) { // Here, 'ele' is the currently selected path element.
-            this.element = ele;
-            this.fillColor = ele.getAttribute("fill");
-            this.fillOpacity = ele.getAttribute("fill-opacity");
-            this.strokeColor = ele.getAttribute("stroke");
-            this.strokeOpacity = ele.getAttribute("stroke-opacity");
-            this.strokeWidth = ele.getAttribute("stroke-width");
-            
-            this.initiate_Translation_Data();
+            this.createBossElement();
         },
         
         
-        // This function modifies the current path object's 'd' attribute
-        // as per the instruction given by the 'tool' object.
-        draw : function(action, coord) {
+        
+        
+        createBossElement : function() {
+            this.bossElement = document.createElementNS("http://www.w3.org/2000/svg", "g");
+            this.bossElement.setAttribute("class", "bossElement");
+            this.passElementAttributes(this.element, this.bossElement, "transform");
             
-            if(coord.length > 0) {
+            this.pathEditline = document.createElementNS("http://www.w3.org/2000/svg", "path");
+            this.pathEditline.setAttribute("class", "pathEditLine");            
+            this.passElementAttributes(this.element, this.pathEditline, "d");
             
-                switch(action) {
-                    case "M":
-                        this.pathData += "M" + coord[0] + "," + coord[1];
-                        break;
-                        
-                    case "L":
-                        this.pathData += " L" + coord[0] + "," + coord[1];
-                        break;
-                        
-                    case "C":
-                        this.pathData += " C" + coord[0] + "," + coord[1] + "," +
-                                                coord[2] + "," + coord[3] + "," +
-                                                coord[4] + "," + coord[5];
-                        break;
-                        
-                    case "Z":
-                        this.pathData += " Z";
-                        break;
-                        
-                    default:
-                        console.log("Action is not specified");
+            this.bossElement.appendChild(this.pathEditline);
+            app.canvas.element.appendChild(this.bossElement);
+            this.initiate_Translation_Data();
+        },
+        
+        
+        
+        
+        removeBossElement : function() {
+            this.bossElement.parentElement.removeChild(this.bossElement);
+        },
+        
+        
+        
+        
+        assign : function(ele) {
+            this.element = ele;            
+            this.createBossElement();
+            this.generatePoints(ele.getAttribute("d"));
+            
+            this.copyColorNStroke("get");
+        },
+        
+        
+        
+        
+        draw : function(type, vData) {
+            let tmp;
+            
+            if(type === "create") {
+
+                if(this.checkPathCompletion(vData[1])) {
+
+                    this.isClosedPath = true;
+
+                //***********************************************************
+                // The tmp variable is required to assign vData
+                // because, vData of the vertex object is a setter function.
+                    let tmp = this.pathNodeArray[0].vData;
+                    tmp[0] = vData[0];
+                    this.pathNodeArray[0].vData = tmp;
+                //***********************************************************
+
+                } else {
+
+                    if(!this.pathNodeArray) {                
+                        this.pathNodeArray = [];
+                    }
+
+                    tmp = new app.Vertex(this.bossElement);
+                    tmp.vData = vData;
+                    this.pathNodeArray.push(tmp);
                 }
                 
-                this.element.setAttribute("d", this.pathData);
+            } else if(type === "manip") {
+                
+                if(this.isClosedPath) {
+                    
+                //***********************************************************
+                // The tmp variable is required to assign vData
+                // because, vData of the vertex object is a setter function.
+                    let tmp = this.pathNodeArray[0].vData;
+                    tmp[0] = vData[0];
+                    this.pathNodeArray[0].vData = tmp;
+                //***********************************************************
+                    
+                } else {                
+                    let l = this.pathNodeArray.length;
+                    this.pathNodeArray[l - 1].vData = vData;
+                }
                 
             } else {
-                console.log("Error while drawing : Co-ordinate list is empty");
+                console.log("Custom Error: Mouse event type is not understood!");
             }
+            
+            this.pathEditline.setAttribute("d", this.generatePathData());
+            this.passElementAttributes(this.pathEditline, this.element, "d");
         },
         
         
-        // This function stores the current 'translate-matrix' data to a variable.
+        
+        
+        checkPathCompletion : function(EVdata) {
+            
+            if(this.pathNodeArray) {
+                
+                let tmp = app.toolSet.vertexClickTolerance,
+                    IVdata = this.pathNodeArray[0].vData[1],
+                    x1 = IVdata[0], y1 = IVdata[1],
+                    x2 = EVdata[0], y2 = EVdata[1];
+
+                if((x1 >= x2 - tmp && x1 <= x2 + tmp) &&
+                   (y1 >= y2 - tmp && y1 <= y2 + tmp)) {
+
+                    return [IVdata];
+
+                }
+            }
+            
+            return false;
+        },
+        
+        
+        
+        
         initiate_Translation_Data : function() {
-            this.tMatrix = this.element.getAttribute("transform").slice(7,-1).split(",");
+            this.tMatrix = this.bossElement.getAttribute("transform").slice(7, -1).split(",");
             this.translationPivot = [parseFloat(this.tMatrix[4]), parseFloat(this.tMatrix[5])];
         },
+        
+        
         
         
         translate : function(x, y) {
@@ -117,33 +193,64 @@
                 this.tMatrix[2] + "," +
                 this.tMatrix[3] + "," + x + "," + y + ")";
 
-            this.element.setAttribute("transform", str);
-        },        
+            this.bossElement.setAttribute("transform", str);
+        },
         
         
-        applyColorNStroke : function(x) {
+        
+        
+        update_Element_Translation : function() {
+            this.passElementAttributes(this.bossElement, this.element, "transform");
+        },
+        
+        
+        
+        
+        copyColorNStroke : function(opt, attr) {
             
-            switch(x) {
-                case "fillColor":
-                    this.element.setAttribute("fill", app.appUI.fillColor);
-                    this.element.setAttribute("fill-opacity", app.appUI.fillOpacity);
-                    this.fillColor = app.appUI.fillColor;
-                    this.fillOpacity = app.appUI.fillOpacity;
-                    break;
-                case "strokeColor":
-                    this.element.setAttribute("stroke", app.appUI.strokeColor);
-                    this.element.setAttribute("stroke-opacity", app.appUI.strokeOpacity);
-                    this.strokeColor = app.appUI.strokeColor;
-                    this.strokeOpacity = app.appUI.strokeOpacity;
-                    break;
-                case "strokeWidth":
-                    this.element.setAttribute("stroke-opacity", app.appUI.strokeOpacity);
-                    this.element.setAttribute("stroke-width", app.appUI.strokeWidth);
-                    this.strokeWidth = app.appUI.strokeWidth;
-                    this.strokeOpacity = app.appUI.strokeOpacity;
-                    break;
+            if(opt === "set") {
+                switch(attr) {
+                    case "fillColor":
+                        this.element.setAttribute("fill", app.appUI.fillColor);
+                        this.element.setAttribute("fill-opacity", app.appUI.fillOpacity);
+                        this.fillColor = app.appUI.fillColor;
+                        this.fillOpacity = app.appUI.fillOpacity;
+                        break;
+                    case "strokeColor":
+                        this.element.setAttribute("stroke", app.appUI.strokeColor);
+                        this.element.setAttribute("stroke-opacity", app.appUI.strokeOpacity);
+                        this.strokeColor = app.appUI.strokeColor;
+                        this.strokeOpacity = app.appUI.strokeOpacity;
+                        break;
+                    case "strokeWidth":
+                        this.element.setAttribute("stroke-opacity", app.appUI.strokeOpacity);
+                        this.element.setAttribute("stroke-width", app.appUI.strokeWidth);
+                        this.strokeWidth = app.appUI.strokeWidth;
+                        this.strokeOpacity = app.appUI.strokeOpacity;
+                        break;
+                }
+                
+            } else if(opt === "get") {
+                this.fillColor = this.element.getAttribute("fill");
+                this.fillOpacity = this.element.getAttribute("fill-opacity");
+                this.strokeColor = this.element.getAttribute("stroke");
+                this.strokeOpacity = this.element.getAttribute("stroke-opacity");
+                this.strokeWidth = this.element.getAttribute("stroke-width");
+                
+            } else {
+                console.log("Custom-error : Choose an option (set or get)!");
             }
+        },
+        
+        
+        
+        
+        passElementAttributes : function(source, destn, attr) {
+            let tmp = source.getAttribute(attr);
+            destn.setAttribute(attr, tmp);
         }
+        
+        
     };
 
 })(window.app);
