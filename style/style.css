@@ -58,3 +58,32 @@ section.UI-1  label {
     margin-bottom: 10px;
     text-align: right;
 }
+
+svg#Canvas .moveToolDragSelection {    
+    stroke: #888;
+    fill: #DDD;    
+}
+
+.bossElement {
+    stroke : #F00;
+    stroke-width : .5;
+}
+
+.bossElement .pathEditLine {
+    fill : transparent;
+    z-index: 1;
+}
+
+.bossElement .vertex {
+    fill : #FFF;
+    z-index: 2;
+}
+
+.bossElement .controlPoint {
+    fill : #F00;
+    z-index: 3;
+}
+
+.bossElement .false {
+    display: none;
+}
