@@ -7,12 +7,17 @@ And as soon as the selection is removed, the object is destroyed. */
 "use strict";
 
 app.toolSet = {
-    spc:[],
-    moveTool               : {},
-    polygonTool            : {},
-    lineTool               : {},
-    vertexClickTolerance   : 5,
-    dragSelectRect         : false
+    mEventTarget         : {},
+    mEventType           : "",
+    mEventShiftKey       : false,
+    mEventCtrlKey        : false,
+    mEventAltKey         : false,
+    
+    initialCoord         : false,
+    currentCoord         : [],
+    
+    vertexClickTolerance : 5,
+    dragSelectRect       : false
 };
 
 
@@ -22,31 +27,35 @@ app.toolSet = {
     
     app.toolSet.serveToolData = function(target, type, shiftKey, ctrlKey, altKey, coord) {
         
+        this.mEventTarget   = target;
+        this.mEventType     = type;
+        this.mEventShiftKey = shiftKey;
+        this.mEventCtrlKey  = ctrlKey;
+        this.mEventAltKey   = altKey;
+        this.currentCoord   = coord;
+        
         if(type === "mousedown") {
-            this.spc = coord;
             app.canvas.element.addEventListener("mousemove", window.app.canvas.handleEvent, false);
+            this.initialCoord = coord;
         }
         
         if(type === "mouseup") {
             app.canvas.element.removeEventListener("mousemove", window.app.canvas.handleEvent, false);
+            this.initialCoord = false;
         }
-        
-        console.clear();
-        console.log(this.spc);
-        console.log(coord);
         
         switch(app.appUI.toolSelected) {
             case "moveTool":
-                app.toolSet.moveTool.doTheJob(target, type, shiftKey, ctrlKey, coord);
+                app.moveTool.doTheJob();
                 break;
             case "polygonTool":
-                app.toolSet.polygonTool.doTheJob(type, coord);
+                app.polygonTool.doTheJob();
                 break;
             case "penTool":
-                app.toolSet.penTool.doTheJob(type, coord);
+                app.penTool.doTheJob();
                 break;
             case "lineTool":
-                app.toolSet.lineTool.doTheJob(type, coord);
+                app.lineTool.doTheJob();
                 break;
             default :
                 alert("No tool was selected");

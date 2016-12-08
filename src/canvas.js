@@ -18,7 +18,7 @@ app.canvas = {
 
     app.canvas.element.setAttribute("width", app.canvas.width);
     app.canvas.element.setAttribute("height", app.canvas.height);
-    app.canvas.element.style.backgroundColor = app.canvas.BGC;	
+    app.canvas.element.style.backgroundColor = app.canvas.BGC;
 
 
     app.canvas.handleEvent = function(e) {
