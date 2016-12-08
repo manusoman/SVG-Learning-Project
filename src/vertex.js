@@ -15,7 +15,7 @@
         this.RCP_Tangent = false;
         
         this.createVertex();
-    }
+    };
     
     
     app.Vertex.prototype = {
