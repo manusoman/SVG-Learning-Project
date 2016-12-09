@@ -7,7 +7,6 @@
     // Creates Prototypal-Inheritance.
     
     app.moveTool.wasObjsDragged = false;
-    app.moveTool.dragSelectRect = false;
     
     
     
@@ -24,7 +23,7 @@
 
             app.canvas.manageObjGeneration("assign", false);
 
-            this.dragSelectRect = app.toolSet.dragSelect("mousedown");
+            this.dragSelect();
             this.dragSelectRect.setAttribute("class", "moveToolDragSelection");
 
         } else {
@@ -47,7 +46,7 @@
     
     
     
-    app.moveTool.mousemove = function() {            
+    app.moveTool.mousemove = function() {
             
         if(app.canvas.selectedObjects) {
 
@@ -63,8 +62,7 @@
 
         } else if(this.dragSelectRect) {
 
-            this.dragSelectRect = app.toolSet.dragSelect("mousemove",
-                                                         this.initialCoord, this.currentCoord);
+            this.dragSelect();
 
         } else {
             // Nothing happens here.
@@ -86,8 +84,8 @@
 
             this.wasObjsDragged = false;
 
-        } else if(this.dragSelectRect) {                
-            this.dragSelectRect = app.toolSet.dragSelect("mouseup");
+        } else if(this.dragSelectRect) {
+            this.dragSelect();
         }            
     };
     
