@@ -5,7 +5,7 @@
     app.Vertex = function(parent) {
         this.parent = parent;
         
-        this._vData = [];        
+        this._vData = [];
         this.vRect  = {};
         
         this.LCP_Circle = false;

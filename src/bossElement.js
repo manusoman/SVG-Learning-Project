@@ -34,7 +34,7 @@
                     break;
                     
                 case "C":
-                    nodeArray[i-1][2] = [tmp[0], tmp[1]]
+                    nodeArray[i-1][2] = [tmp[0], tmp[1]];
                     nodeArray[i]      = [[tmp[2], tmp[3]], [tmp[4], tmp[5]], false];
                     
                     x = (tmp[4] === nodeArray[0][1][0]) && (tmp[5] === nodeArray[0][1][1]);

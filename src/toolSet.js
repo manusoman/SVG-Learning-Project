@@ -51,6 +51,12 @@ And as soon as the selection is removed, the object is destroyed. */
                 case "moveTool":
                     app.moveTool.doTheJob();
                     break;
+                /*case "rectangleTool":
+                    app.rectangleTool.doTheJob();
+                    break;
+                case "ellipseTool":
+                    app.ellipseTool.doTheJob();
+                    break;*/
                 case "polygonTool":
                     app.polygonTool.doTheJob();
                     break;

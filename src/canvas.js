@@ -29,14 +29,6 @@ app.canvas = {
             x = e.clientX - a.left,
             y = e.clientY - a.top;
         
-        
-        /*if(e.type === "mousedown") {
-            app.canvas.spc = [x, y];
-        }
-        console.clear();
-        console.log(app.canvas.spc);
-        console.log([x, y]);*/
-        
         app.toolSet.serveToolData(e.target, e.type, e.shiftKey, e.ctrlKey, e.altKey, [x, y]);
     };
     
@@ -118,7 +110,7 @@ app.canvas = {
                     
                     
                 default :
-                    console.log("Operation is not specified!");
+                    console.log("Custom Error: Operation is not specified!");
             }
             
             
@@ -138,7 +130,7 @@ app.canvas = {
             return newObj;
             
         } else {
-            console.log("Mode is not specified!");
+            console.log("Custom Error: Mode is not specified!");
         }
 
     };
