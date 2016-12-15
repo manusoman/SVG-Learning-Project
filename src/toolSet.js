@@ -51,12 +51,12 @@ And as soon as the selection is removed, the object is destroyed. */
                 case "moveTool":
                     app.moveTool.doTheJob();
                     break;
-                /*case "rectangleTool":
+                case "rectangleTool":
                     app.rectangleTool.doTheJob();
                     break;
                 case "ellipseTool":
                     app.ellipseTool.doTheJob();
-                    break;*/
+                    break;
                 case "polygonTool":
                     app.polygonTool.doTheJob();
                     break;
@@ -114,19 +114,33 @@ And as soon as the selection is removed, the object is destroyed. */
                 let x = this.initialCoord[0],
                     y = this.initialCoord[1],
                     width  = this.currentCoord[0] - this.initialCoord[0],
-                    height = this.currentCoord[1] - this.initialCoord[1];             
+                    height = this.currentCoord[1] - this.initialCoord[1],
+                    rx = width / 2,
+                    ry = height / 2,
+                    cx = x + rx,
+                    cy = y + ry;
 
                 if(width < 0) {
                     x = this.currentCoord[0];
                     width = Math.abs(width);
+                    rx = Math.abs(rx);
                 }
 
                 if(height < 0) {
                     y = this.currentCoord[1];
                     height = Math.abs(height);
+                    ry = Math.abs(ry);
                 }
                 
-                return [x, y, width, height];
+                return [x, y, width, height, cx, cy, rx, ry];
+                // x      -> start 'x' point of the rectangle.
+                // y      -> start 'y' point of the rectangle.
+                // width  -> 'width' of the rectangle.
+                // height -> 'height' of the rectangle.
+                // cx     -> x coordinate of the center of the rectangle.
+                // cy     -> y coordinate of the center of the rectangle.
+                // rx     -> horizontal radius of the rectangle.
+                // ry     -> vertical radius of the rectangle.
             }
         }
 

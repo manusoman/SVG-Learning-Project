@@ -5,7 +5,7 @@
 (function(app) {	
 
     // Path object constructor
-    app.PathObject = function(func, ele) {
+    app.PathObject = function(func, opt) {
         this.bossElement = {};
         this.pathEditline = {};
         
@@ -24,9 +24,10 @@
         this.strokeOpacity = "";
         this.strokeWidth = "";
         
-        this[func](ele);
+        this[func](opt);
         // This function eliminates the requirement of a conditional statement.
-        // Only 'assign' function make use of the 'ele' value.
+        // The 'opt' variable will be an svg element if 'func' is 'assign' and
+        // it will be the 'type' if 'func' is 'create'.
     };
 
 
@@ -39,10 +40,38 @@
         
         
         
-        create : function() {
-            this.element = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        create : function(type) {
+            
+            this.element = document.createElementNS("http://www.w3.org/2000/svg", type);
+            
+            if(type === "rect") {
+                
+                this.element.setAttribute("x", "");
+                this.element.setAttribute("y", "");
+                this.element.setAttribute("rx", "");
+                this.element.setAttribute("ry", "");
+                this.element.setAttribute("width", "");
+                this.element.setAttribute("height", "");
+                
+            } else if(type === "ellipse") {
+                
+                this.element.setAttribute("cx", "");
+                this.element.setAttribute("cy", "");
+                this.element.setAttribute("rx", "");
+                this.element.setAttribute("ry", "");
+                
+            } else if(type === "path") {
+                
+                this.element.setAttribute("d", "");
+                
+            } else {
+                
+                this.element = null;
+                console.log("Custom Error: PathObject type is not mentioned or not understood!");
+                
+            }
+            
             this.element.id = "Layer" + (++app.appUI.layerPalette.layerIDCount);
-            this.element.setAttribute("d", "");
             this.element.setAttribute("transform", "matrix(1,0,0,1,0,0)");
             
             this.copyColorNStroke("set", "fillColor");
@@ -60,13 +89,42 @@
         
         
         createBossElement : function() {
+            
             this.bossElement = document.createElementNS("http://www.w3.org/2000/svg", "g");
             this.bossElement.setAttribute("class", "bossElement");
             this.passElementAttributes(this.element, this.bossElement, "transform");
             
-            this.pathEditline = document.createElementNS("http://www.w3.org/2000/svg", "path");
-            this.pathEditline.setAttribute("class", "pathEditLine");            
-            this.passElementAttributes(this.element, this.pathEditline, "d");
+            let type = this.identify_Path_Type();
+            
+            this.pathEditline = document.createElementNS("http://www.w3.org/2000/svg", type);
+            this.pathEditline.setAttribute("class", "pathEditLine");
+            
+            if(type === "rect") {
+                
+                this.passElementAttributes(this.element, this.pathEditline, "x");
+                this.passElementAttributes(this.element, this.pathEditline, "y");
+                this.passElementAttributes(this.element, this.pathEditline, "rx");
+                this.passElementAttributes(this.element, this.pathEditline, "ry");
+                this.passElementAttributes(this.element, this.pathEditline, "width");
+                this.passElementAttributes(this.element, this.pathEditline, "height");
+                
+            } else if(type === "ellipse") {
+                
+                this.passElementAttributes(this.element, this.pathEditline, "cx");
+                this.passElementAttributes(this.element, this.pathEditline, "cy");
+                this.passElementAttributes(this.element, this.pathEditline, "rx");
+                this.passElementAttributes(this.element, this.pathEditline, "ry");
+                
+            } else if(type === "path") {
+                
+                this.passElementAttributes(this.element, this.pathEditline, "d");
+                
+            } else {
+                
+                this.pathEditline = null;
+                console.log("Custom Error: PathEditLine type is not mentioned or not understood!");
+                
+            }
             
             this.bossElement.appendChild(this.pathEditline);
             app.canvas.element.appendChild(this.bossElement);
@@ -86,7 +144,10 @@
         assign : function(ele) {
             this.element = ele;            
             this.createBossElement();
-            this.generatePoints(ele.getAttribute("d"));
+            
+            if(this.identify_Path_Type() === "path") {
+                this.generatePoints(ele.getAttribute("d"));
+            }
             
             this.copyColorNStroke("get");
         },
@@ -94,7 +155,63 @@
         
         
         
-        draw : function(type, vData) {
+        drawRectangle : function(type, rectData) {
+            
+            if(type === "startPoint") { 
+                
+                this.pathEditline.setAttribute("x", rectData[0]);
+                this.pathEditline.setAttribute("y", rectData[1]);
+                
+            } else if(type === "modify") {
+                
+                this.pathEditline.setAttribute("x", rectData[0]);
+                this.pathEditline.setAttribute("y", rectData[1]);
+                this.pathEditline.setAttribute("width", rectData[2]);
+                this.pathEditline.setAttribute("height", rectData[3]);
+                
+            } else {
+                console.log("Custom Error: Mouse event type is not understood!");
+            }
+            
+            this.passElementAttributes(this.pathEditline, this.element, "x");
+            this.passElementAttributes(this.pathEditline, this.element, "y");
+            //this.passElementAttributes(this.pathEditline, this.element, "rx");
+            //this.passElementAttributes(this.pathEditline, this.element, "ry");
+            this.passElementAttributes(this.pathEditline, this.element, "width");
+            this.passElementAttributes(this.pathEditline, this.element, "height");
+        },
+        
+        
+        
+        
+        drawEllipse : function(type, elpsData) {
+            
+            if(type === "center") { 
+                
+                this.pathEditline.setAttribute("cx", elpsData[0]);
+                this.pathEditline.setAttribute("cy", elpsData[1]);
+                
+            } else if(type === "modify") {
+                
+                this.pathEditline.setAttribute("cx", elpsData[0]);
+                this.pathEditline.setAttribute("cy", elpsData[1]);
+                this.pathEditline.setAttribute("rx", elpsData[2]);
+                this.pathEditline.setAttribute("ry", elpsData[3]);
+                
+            } else {
+                console.log("Custom Error: Mouse event type is not understood!");
+            }
+            
+            this.passElementAttributes(this.pathEditline, this.element, "cx");
+            this.passElementAttributes(this.pathEditline, this.element, "cy");
+            this.passElementAttributes(this.pathEditline, this.element, "rx");
+            this.passElementAttributes(this.pathEditline, this.element, "ry");
+        },
+        
+        
+        
+        
+        drawPath : function(type, vData) {
             let tmp;
             
             if(type === "create") {
@@ -168,6 +285,13 @@
             }
             
             return false;
+        },
+        
+        
+        
+        
+        identify_Path_Type : function() {
+            return this.element.tagName.toLowerCase();
         },
         
         

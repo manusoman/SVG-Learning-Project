@@ -8,7 +8,7 @@
     
     
     app.polygonTool.pathObj = false;
-    app.polygonTool.vertex  = false;
+    app.polygonTool.IMD  = false; // IMD -> Is Mouse Down.
     
     
     
@@ -17,21 +17,20 @@
         if(this.mEventType === "mousedown") {
                 
             if(!this.pathObj) {
-                this.pathObj = app.canvas.manageObjGeneration("create");
+                this.pathObj = app.canvas.manageObjGeneration("create", "path");
             }
 
-            this.pathObj.draw("create", [false, this.currentCoord, false]);
-            this.vertex = this.currentCoord;
+            this.pathObj.drawPath("create", [false, this.currentCoord, false]);
+            this.IMD = true;
 
         } else if(this.mEventType === "mousemove") {
 
-            if(this.vertex) { // checks whether "mousedown" event happened before "mousemove".
-                this.pathObj.draw("manip", [false, this.currentCoord, false]);
-                this.vertex = this.currentCoord;
+            if(this.IMD) { // checks whether "mousedown" event happened before "mousemove".
+                this.pathObj.drawPath("manip", [false, this.currentCoord, false]);
             }
 
         } else if(this.mEventType === "mouseup") {
-            this.vertex = false;
+            this.IMD = false;
 
             if(this.pathObj.isClosedPath) {
                 this.pathObj = false;

@@ -16,10 +16,10 @@
         if(this.mEventType === "mousedown") {
                 
             if(!this.pathObj) {
-                this.pathObj = app.canvas.manageObjGeneration("create");
+                this.pathObj = app.canvas.manageObjGeneration("create", "path");
             }
 
-            this.pathObj.draw("create", [false, this.currentCoord, false]);
+            this.pathObj.drawPath("create", [false, this.currentCoord, false]);
             this.vertex = this.currentCoord;
 
         } else if(this.mEventType === "mousemove") {
@@ -30,7 +30,7 @@
                 lcp[0] = this.vertex[0] + (this.vertex[0] - this.currentCoord[0]);
                 lcp[1] = this.vertex[1] + (this.vertex[1] - this.currentCoord[1]);
 
-                this.pathObj.draw("manip", [lcp, this.vertex, this.currentCoord] );
+                this.pathObj.drawPath("manip", [lcp, this.vertex, this.currentCoord] );
             }
 
         } else if(this.mEventType === "mouseup") {

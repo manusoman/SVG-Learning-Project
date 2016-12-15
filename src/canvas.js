@@ -45,11 +45,13 @@ app.canvas = {
     
     
 
-    app.canvas.manageObjGeneration = function(mode, op, ele) {
+    app.canvas.manageObjGeneration = function(mode, opt, ele) {
+    // Here, the 'opt' variable will be the 'type' if 'mode' is create and
+    // it will be the 'operation' if 'mode' is assign.
         
         if(mode === "assign") {
             
-            switch(op) {
+            switch(opt) {
 
                 case "+": // Single object selection.
 
@@ -123,7 +125,7 @@ app.canvas = {
             app.canvas.manageObjGeneration("assign", false);
             //this function removes existing selected objects if there's any.
             
-            let newObj = new app.PathObject(mode);
+            let newObj = new app.PathObject(mode, opt);
             app.canvas.selectedObjects = [newObj];
             
             app.appUI.layerPalette.selectionUpdate();

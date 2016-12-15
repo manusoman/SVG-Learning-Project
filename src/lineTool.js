@@ -17,16 +17,16 @@
         if(this.mEventType === "mousedown") {
                 
             if(!this.pathObj) {
-                this.pathObj = app.canvas.manageObjGeneration("create");
+                this.pathObj = app.canvas.manageObjGeneration("create", "path");
             }
 
-            this.pathObj.draw("create", [false, this.currentCoord, false]);
+            this.pathObj.drawPath("create", [false, this.currentCoord, false]);
             this.vertex = this.currentCoord;
 
         } else if(this.mEventType === "mousemove") {
 
             if(this.vertex) { // checks whether "mousedown" event happened before "mousemove".
-                this.pathObj.draw("manip", [false, this.currentCoord, false]);
+                this.pathObj.drawPath("manip", [false, this.currentCoord, false]);
                 this.vertex = this.currentCoord;
             }
 
