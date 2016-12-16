@@ -145,8 +145,10 @@
             this.element = ele;            
             this.createBossElement();
             
-            if(this.identify_Path_Type() === "path") {
-                this.generatePoints(ele.getAttribute("d"));
+            if(app.appUI.toolSelected === "editTool") {
+                if(this.identify_Path_Type() === "path") {
+                    this.generatePoints(ele.getAttribute("d"));
+                }
             }
             
             this.copyColorNStroke("get");
@@ -306,12 +308,11 @@
         
         
         translate : function(x, y) {
-            let str = "";
 
             x = this.translationPivot[0] + x;
             y = this.translationPivot[1] + y;
 
-            str = "matrix(" +
+            let str = "matrix(" +
                 this.tMatrix[0] + "," +
                 this.tMatrix[1] + "," +
                 this.tMatrix[2] + "," +
