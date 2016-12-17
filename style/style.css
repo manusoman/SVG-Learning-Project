@@ -64,26 +64,26 @@ svg#Canvas .moveToolDragSelection {
     fill: #DDD;    
 }
 
-.bossElement {
+.editGroup {
     stroke : #F00;
     stroke-width : .5;
 }
 
-.bossElement .pathEditLine {
+.editGroup .pathEditLine {
     fill : transparent;
     z-index: 1;
 }
 
-.bossElement .vertex {
+.editGroup .vertex {
     fill : #FFF;
     z-index: 2;
 }
 
-.bossElement .controlPoint {
+.editGroup .controlPoint {
     fill : #F00;
     z-index: 3;
 }
 
-.bossElement .false {
+.editGroup .false {
     display: none;
 }
