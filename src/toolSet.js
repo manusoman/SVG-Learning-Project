@@ -11,6 +11,9 @@ And as soon as the selection is removed, the object is destroyed. */
     
     
     app.toolSet = {
+        
+        activeTool           : false,
+        
         mEventTarget         : {},
         mEventType           : "",
         mEventShiftKey       : false,
@@ -44,31 +47,9 @@ And as soon as the selection is removed, the object is destroyed. */
                 app.canvas.element.removeEventListener("mousemove", window.app.canvas.handleEvent, false);
                 this.initialCoord = false;
             }
-
-
-            switch(app.appUI.toolSelected) {
-
-                case "moveTool":
-                    app.moveTool.doTheJob();
-                    break;
-                case "rectangleTool":
-                    app.rectangleTool.doTheJob();
-                    break;
-                case "ellipseTool":
-                    app.ellipseTool.doTheJob();
-                    break;
-                case "polygonTool":
-                    app.polygonTool.doTheJob();
-                    break;
-                case "penTool":
-                    app.penTool.doTheJob();
-                    break;
-                case "lineTool":
-                    app.lineTool.doTheJob();
-                    break;
-                default :
-                    alert("No tool was selected");
-            }
+            
+            
+            app[this.activeTool].doTheJob();
 
         },
 
@@ -78,8 +59,8 @@ And as soon as the selection is removed, the object is destroyed. */
 
             if(this.mEventType === "mousedown") {
 
-                this.dragSelectRect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-                app.canvas.element.appendChild(this.dragSelectRect);
+                this.dragSelectRect = app.canvas.generate_SVG_Element("rect");
+                app.canvas.append_SVG_Element(this.dragSelectRect, false);
 
             } else if(this.mEventType === "mousemove") {
 
@@ -96,7 +77,7 @@ And as soon as the selection is removed, the object is destroyed. */
             } else if(this.mEventType === "mouseup") {
 
                 if(this.dragSelectRect) {
-                    app.canvas.element.removeChild(this.dragSelectRect);
+                    app.canvas.remove_SVG_Element(this.dragSelectRect);
                     this.dragSelectRect = false;
                 }
 
@@ -145,6 +126,14 @@ And as soon as the selection is removed, the object is destroyed. */
         }
 
     };
+    
+    
+    
+    
+    
+    // This line tells the appUI object that the toolSet object
+    // is created and ready for data transfer/reception.
+    app.appUI.is_Tool_Set_Object_Ready = true;
 
 
 })(window.app);

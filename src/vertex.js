@@ -39,30 +39,30 @@
         
         
         createVertex : function() {
-            this.vRect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+            this.vRect = app.canvas.generate_SVG_Element("rect");
             this.vRect.setAttribute("width", this.vRectDimension);
             this.vRect.setAttribute("height", this.vRectDimension);
             this.vRect.setAttribute("class", "vertex");
             
-            this.LCP_Circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+            this.LCP_Circle = app.canvas.generate_SVG_Element("circle");
             this.LCP_Circle.setAttribute("r", this.vRectDimension / 2);
             this.LCP_Circle.setAttribute("class", "controlPoint false");
             
-            this.LCP_Tangent = document.createElementNS("http://www.w3.org/2000/svg", "line");
+            this.LCP_Tangent = app.canvas.generate_SVG_Element("line");
             this.LCP_Tangent.setAttribute("class", "CPTangent false");
             
-            this.RCP_Circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+            this.RCP_Circle = app.canvas.generate_SVG_Element("circle");
             this.RCP_Circle.setAttribute("r", this.vRectDimension / 2);
             this.RCP_Circle.setAttribute("class", "controlPoint false");
             
-            this.RCP_Tangent = document.createElementNS("http://www.w3.org/2000/svg", "line");
+            this.RCP_Tangent = app.canvas.generate_SVG_Element("line");
             this.RCP_Tangent.setAttribute("class", "CPTangent false");
             
-            this.parent.appendChild(this.LCP_Circle);
-            this.parent.appendChild(this.LCP_Tangent);
-            this.parent.appendChild(this.RCP_Circle);
-            this.parent.appendChild(this.RCP_Tangent);
-            this.parent.appendChild(this.vRect);            
+            app.canvas.append_SVG_Element(this.LCP_Circle, this.parent);
+            app.canvas.append_SVG_Element(this.LCP_Tangent, this.parent);
+            app.canvas.append_SVG_Element(this.RCP_Circle, this.parent);
+            app.canvas.append_SVG_Element(this.RCP_Tangent, this.parent);
+            app.canvas.append_SVG_Element(this.vRect, this.parent);           
         },
         
         
@@ -98,7 +98,7 @@
                 this.RCP_Tangent.setAttribute("y2", RCP[1]);
                 this.RCP_Tangent.setAttribute("class", "CPTangent");
             }
-        }        
+        }
         
         
     };

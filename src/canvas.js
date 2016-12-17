@@ -1,7 +1,6 @@
 "use strict";
 
 app.canvas = {
-    spc : [],
     element         : document.getElementById("Canvas"),
 
     width           : 800,
@@ -88,7 +87,7 @@ app.canvas = {
                             let n = this.selectedObjects.indexOf(obj),
                             t = this.selectedObjects.splice(n, 1);
                             
-                            t[0].removeBossElement();
+                            t[0].remove_Edit_Group();
                             t[0] = null;
 
                             if(this.selectedObjects.length === 0) {
@@ -103,7 +102,7 @@ app.canvas = {
                     if(this.selectedObjects) {
                         let i, l = this.selectedObjects.length;
                         for(i = 0; i < l; i++) {
-                            this.selectedObjects[i].removeBossElement();
+                            this.selectedObjects[i].remove_Edit_Group();
                             this.selectedObjects[i] = null;
                         }
                     }
@@ -156,5 +155,31 @@ app.canvas = {
         }
         return false;
     };
+    
+    
+    
+    
+    app.canvas.generate_SVG_Element = function(type) {
+        return document.createElementNS("http://www.w3.org/2000/svg", type);
+    };
+    
+    
+    
+    app.canvas.append_SVG_Element = function(ele, parent) {
+        
+        if(!parent) {
+            parent = this.element;
+        }
+        
+        parent.appendChild(ele);
+    };
+    
+    
+    
+    app.canvas.remove_SVG_Element = function(ele) {
+        ele.parentNode.removeChild(ele);
+    };
+    
+    
 
 })(window.app);

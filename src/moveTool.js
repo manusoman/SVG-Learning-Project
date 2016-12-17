@@ -6,6 +6,8 @@
     app.moveTool = Object.create(app.toolSet);
     // Creates Prototypal-Inheritance.
     
+    
+    app.moveTool.bossElement = false;
     app.moveTool.wasObjsDragged = false;
     
     
@@ -22,6 +24,7 @@
         if(this.mEventTarget === app.canvas.element) {
 
             app.canvas.manageObjGeneration("assign", false);
+            this.removeBossElement();
 
             this.dragSelect();
             this.dragSelectRect.setAttribute("class", "moveToolDragSelection");
@@ -87,6 +90,25 @@
         } else if(this.dragSelectRect) {
             this.dragSelect();
         }            
+    };
+    
+    
+    
+    
+    app.moveTool.createBossElement = function() {
+        
+        this.bossElement = app.canvas.generate_SVG_Element("g");
+        app.canvas.append_SVG_Element(this.bossElement);
+    };
+    
+    
+    
+    
+    app.moveTool.removeBossElement = function() {
+        
+        if(this.bossElement) {
+            app.canvas.remove_SVG_Element(this.bossElement);
+        }
     };
     
     

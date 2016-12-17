@@ -6,7 +6,8 @@
 
     // Path object constructor
     app.PathObject = function(func, opt) {
-        this.bossElement = {};
+        
+        this.editGroup = {};
         this.pathEditline = {};
         
         this.isClosedPath = false;
@@ -42,7 +43,7 @@
         
         create : function(type) {
             
-            this.element = document.createElementNS("http://www.w3.org/2000/svg", type);
+            this.element = app.canvas.generate_SVG_Element(type);
             
             if(type === "rect") {
                 
@@ -80,23 +81,23 @@
             this.copyColorNStroke("set", "strokeOpacity");
             this.copyColorNStroke("set", "strokeWidth");
 
-            app.canvas.element.appendChild(this.element);
+            app.canvas.append_SVG_Element(this.element, false);
             
-            this.createBossElement();
+            this.create_Edit_Group();
         },
         
         
         
         
-        createBossElement : function() {
+        create_Edit_Group : function() {
             
-            this.bossElement = document.createElementNS("http://www.w3.org/2000/svg", "g");
-            this.bossElement.setAttribute("class", "bossElement");
-            this.passElementAttributes(this.element, this.bossElement, "transform");
+            this.editGroup = app.canvas.generate_SVG_Element("g");
+            this.editGroup.setAttribute("class", "editGroup");
+            this.passElementAttributes(this.element, this.editGroup, "transform");
             
             let type = this.identify_Path_Type();
             
-            this.pathEditline = document.createElementNS("http://www.w3.org/2000/svg", type);
+            this.pathEditline = app.canvas.generate_SVG_Element(type);
             this.pathEditline.setAttribute("class", "pathEditLine");
             
             if(type === "rect") {
@@ -126,16 +127,16 @@
                 
             }
             
-            this.bossElement.appendChild(this.pathEditline);
-            app.canvas.element.appendChild(this.bossElement);
+            app.canvas.append_SVG_Element(this.pathEditline, this.editGroup);
+            app.canvas.append_SVG_Element(this.editGroup, false);
             this.initiate_Translation_Data();
         },
         
         
         
         
-        removeBossElement : function() {
-            this.bossElement.parentElement.removeChild(this.bossElement);
+        remove_Edit_Group : function() {
+            this.editGroup.parentElement.removeChild(this.editGroup);
         },
         
         
@@ -143,7 +144,7 @@
         
         assign : function(ele) {
             this.element = ele;            
-            this.createBossElement();
+            this.create_Edit_Group();
             
             if(app.appUI.toolSelected === "editTool") {
                 if(this.identify_Path_Type() === "path") {
@@ -236,7 +237,7 @@
                         this.pathNodeArray = [];
                     }
 
-                    tmp = new app.Vertex(this.bossElement);
+                    tmp = new app.Vertex(this.editGroup);
                     tmp.vData = vData;
                     this.pathNodeArray.push(tmp);
                 }
@@ -300,7 +301,7 @@
         
         
         initiate_Translation_Data : function() {
-            this.tMatrix = this.bossElement.getAttribute("transform").slice(7, -1).split(",");
+            this.tMatrix = this.editGroup.getAttribute("transform").slice(7, -1).split(",");
             this.translationPivot = [parseFloat(this.tMatrix[4]), parseFloat(this.tMatrix[5])];
         },
         
@@ -318,14 +319,14 @@
                 this.tMatrix[2] + "," +
                 this.tMatrix[3] + "," + x + "," + y + ")";
 
-            this.bossElement.setAttribute("transform", str);
+            this.editGroup.setAttribute("transform", str);
         },
         
         
         
         
         update_Element_Translation : function() {
-            this.passElementAttributes(this.bossElement, this.element, "transform");
+            this.passElementAttributes(this.editGroup, this.element, "transform");
         },
         
         
