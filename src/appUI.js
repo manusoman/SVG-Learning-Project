@@ -11,7 +11,7 @@
         strokeColor 	 : "#000",
         strokeOpacity	 : 1,
         strokeWidth 	 : 1,
-        
+
         toolSetObjStatus : false,
         
         
