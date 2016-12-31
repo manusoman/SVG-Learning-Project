@@ -1,13 +1,8 @@
-/* Define the action of each tool in the toolbox.
-
-Each time a path element is selected, a wraper object for 
-that element is created using the 'PathObject' constructor.
-And as soon as the selection is removed, the object is destroyed. */
-
-"use strict";
-
+// Define the action of each tool in the toolbox.
 
 (function(app) {
+    
+    "use strict";
     
     
     app.toolSet = {
@@ -25,6 +20,9 @@ And as soon as the selection is removed, the object is destroyed. */
 
         vertexClickTolerance : 5,
         dragSelectRect       : false,
+        
+        bossElement          : false,
+        boundingRect         : false,
         
     
     
@@ -48,10 +46,53 @@ And as soon as the selection is removed, the object is destroyed. */
                 this.initialCoord = false;
             }
             
-            
             app[this.activeTool].doTheJob();
 
         },
+        
+        
+        
+        
+        createBossElementsGroup : function() {
+            
+            this.bossElement = app.canvas.generate_SVG_Element("g");
+            this.bossElement.setAttribute("class", "bossElement");
+            
+            this.boundingRect = app.canvas.generate_SVG_Element("rect");
+            
+            app.canvas.append_SVG_Element(this.boundingRect, this.bossElement);
+            app.canvas.append_SVG_Element(this.bossElement);
+        },
+        
+        
+        
+        
+        update_BossElements_Group : function(editGroup) {
+            
+            if(editGroup) {
+                
+                app.canvas.remove_SVG_Element(this.bossElement);
+                app.canvas.append_SVG_Element(this.bossElement);
+                
+                app.canvas.append_SVG_Element(editGroup, this.bossElement);
+            }
+            
+            this.update_BoundingRect();
+        },
+        
+        
+        
+        
+        update_BoundingRect : function() {
+            
+            let tmpRect = this.bossElement.getBBox();
+            
+            this.boundingRect.setAttribute("x", tmpRect.x);
+            this.boundingRect.setAttribute("y", tmpRect.y);
+            this.boundingRect.setAttribute("width", tmpRect.width);
+            this.boundingRect.setAttribute("height", tmpRect.height);
+        },
+        
 
 
 
@@ -123,7 +164,25 @@ And as soon as the selection is removed, the object is destroyed. */
                 // rx     -> horizontal radius of the rectangle.
                 // ry     -> vertical radius of the rectangle.
             }
+        },
+        
+        
+        
+        // Returns a mouse-drag-displacement vector.
+        generate_Drag_Vector : function() {
+            
+            if(this.initialCoord && this.currentCoord) {
+                
+                let x = this.currentCoord[0] - this.initialCoord[0],
+                    y = this.currentCoord[1] - this.initialCoord[1];
+                
+                return [x, y];
+            }
+            
+            return [0, 0];
         }
+        
+        
 
     };
     
@@ -134,6 +193,11 @@ And as soon as the selection is removed, the object is destroyed. */
     // This line tells the appUI object that the toolSet object
     // is created and ready for data transfer/reception.
     app.appUI.is_Tool_Set_Object_Ready = true;
+    
+    
+    // Creates the BossElementsGroup as soon as the toolset object
+    // is created.
+    app.toolSet.createBossElementsGroup();
 
 
 })(window.app);

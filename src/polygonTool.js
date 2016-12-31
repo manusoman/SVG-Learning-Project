@@ -1,7 +1,9 @@
-"use strict";
-
 
 (function(app) {
+    
+    "use strict";
+    
+    
     
     app.polygonTool = Object.create(app.toolSet);
     // Creates Prototypal-Inheritance.

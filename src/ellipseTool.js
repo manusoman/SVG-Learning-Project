@@ -1,7 +1,8 @@
-"use strict";
-
 
 (function(app) {
+    
+    "use strict";
+    
     
     app.ellipseTool = Object.create(app.toolSet);
     // Creates Prototypal-Inheritance.

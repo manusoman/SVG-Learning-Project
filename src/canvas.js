@@ -1,19 +1,20 @@
-"use strict";
-
-app.canvas = {
-    element         : document.getElementById("Canvas"),
-
-    width           : 800,
-    height          : 600,
-    BGC             : "#FFF",
-
-    selectedObjects : false,
-    objectList      : []	// an array of IDs for every object in the canvas.
-};
-
-
-
 (function(app) {
+
+    "use strict";
+    
+
+    app.canvas = {
+        element         : document.getElementById("Canvas"),
+
+        width           : 800,
+        height          : 600,
+        BGC             : "#FFF",
+
+        selectedObjects : false,
+        objectList      : []	// an array of IDs for every object in the canvas.
+    };
+
+
 
     app.canvas.element.setAttribute("width", app.canvas.width);
     app.canvas.element.setAttribute("height", app.canvas.height);

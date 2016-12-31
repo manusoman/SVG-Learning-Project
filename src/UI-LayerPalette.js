@@ -1,8 +1,10 @@
 /* Configuring Layer Palette */
 
-"use strict";
-
 (function(app) {
+    
+    "use strict";
+    
+    
 
     app.appUI.layerPalette = {
         layerIDCount	: 0,

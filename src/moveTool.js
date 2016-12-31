@@ -1,13 +1,14 @@
-"use strict";
-
 
 (function(app) {
+    
+    "use strict";
+    
+    
 
     app.moveTool = Object.create(app.toolSet);
     // Creates Prototypal-Inheritance.
     
     
-    app.moveTool.bossElement = false;
     app.moveTool.wasObjsDragged = false;
     
     
@@ -24,13 +25,13 @@
         if(this.mEventTarget === app.canvas.element) {
 
             app.canvas.manageObjGeneration("assign", false);
-            this.removeBossElement();
 
             this.dragSelect();
             this.dragSelectRect.setAttribute("class", "moveToolDragSelection");
 
         } else {
-
+            
+            
             if(this.mEventShiftKey) { // Checks whether Shift-key was pressed while event.
 
                 app.canvas.manageObjGeneration("assign", "++", this.mEventTarget);
@@ -53,12 +54,10 @@
             
         if(app.canvas.selectedObjects) {
 
-            let i, l = app.canvas.selectedObjects.length,
-                x = this.currentCoord[0] - this.initialCoord[0],
-                y = this.currentCoord[1] - this.initialCoord[1];
+            let i, l = app.canvas.selectedObjects.length;
 
             for(i = 0; i < l; i++) {
-                app.canvas.selectedObjects[i].translate(x, y);
+                app.canvas.selectedObjects[i].translate(this.generate_Drag_Vector());
             }
 
             this.wasObjsDragged = true;
@@ -79,10 +78,10 @@
             
         if(this.wasObjsDragged) { // Checks whether mouse was dragged.
 
-            let i, l = app.canvas.selectedObjects.length;			
+            let i, l = app.canvas.selectedObjects.length;
+            
             for(i = 0; i < l; i++) {
-                app.canvas.selectedObjects[i].initiate_Translation_Data();
-                app.canvas.selectedObjects[i].update_Element_Translation();
+                app.canvas.selectedObjects[i].update_Element_Transformation();
             }
 
             this.wasObjsDragged = false;
@@ -90,25 +89,6 @@
         } else if(this.dragSelectRect) {
             this.dragSelect();
         }            
-    };
-    
-    
-    
-    
-    app.moveTool.createBossElement = function() {
-        
-        this.bossElement = app.canvas.generate_SVG_Element("g");
-        app.canvas.append_SVG_Element(this.bossElement);
-    };
-    
-    
-    
-    
-    app.moveTool.removeBossElement = function() {
-        
-        if(this.bossElement) {
-            app.canvas.remove_SVG_Element(this.bossElement);
-        }
     };
     
     

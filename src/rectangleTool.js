@@ -1,7 +1,9 @@
-"use strict";
-
 
 (function(app) {
+    
+    "use strict";
+    
+    
     
     app.rectangleTool = Object.create(app.toolSet);
     // Creates Prototypal-Inheritance.

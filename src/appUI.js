@@ -1,8 +1,8 @@
 /* Configuring UI elements and their actions */
 
-"use strict";
-
 (function(app) {
+    
+    "use strict";
 
     app.appUI = {
         _toolSelected 	 : "moveTool",

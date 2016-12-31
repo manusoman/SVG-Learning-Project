@@ -2,9 +2,11 @@
 // M0,50 C0,0,0,0,50,0 C100,0,100,0,100,50 C100,100,100,100,50,100 C0,100,0,100,0,50 Z
 // M270.5,206 L339.5,153 L536.5,245 L329.5,353 Z
 
-"use strict";
-
 (function(app) {
+    
+    "use strict";
+    
+    
     
     app.PathObject.prototype.generatePoints = function(d) {
         let i, j, l, typ, tmp, x = false, nodeArray = [];

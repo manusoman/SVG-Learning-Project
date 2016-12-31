@@ -1,6 +1,9 @@
-"use strict";
 
 (function(app) {
+    
+    "use strict";
+    
+    
     
     app.Vertex = function(parent) {
         this.parent = parent;

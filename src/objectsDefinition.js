@@ -1,9 +1,11 @@
 /* Defines different type of objects, their prototypes and inheritance */
 
-"use strict";
-
-(function(app) {	
-
+(function(app) {
+    
+    "use strict";
+    
+    
+    
     // Path object constructor
     app.PathObject = function(func, opt) {
         
@@ -14,10 +16,7 @@
         this.pathNodeArray = false;
         
         this.element = {};
-        //this.pathData = "";
-        //this.startPoint = [];
-        this.tMatrix = [];
-        this.translationPivot = [];
+        this.tMatrix = {};
         
         this.fillColor = "";
         this.fillOpacity = "";
@@ -37,6 +36,8 @@
     app.PathObject.prototype = {
         
         constructor : app.PathObject,
+        
+        bossElement : app.toolSet.bossElement,
         
         
         
@@ -73,7 +74,8 @@
             }
             
             this.element.id = "Layer" + (++app.appUI.layerPalette.layerIDCount);
-            this.element.setAttribute("transform", "matrix(1,0,0,1,0,0)");
+            
+            this.initilize_TMatrix(this.element);
             
             this.copyColorNStroke("set", "fillColor");
             this.copyColorNStroke("set", "fillOpacity");
@@ -128,8 +130,9 @@
             }
             
             app.canvas.append_SVG_Element(this.pathEditline, this.editGroup);
-            app.canvas.append_SVG_Element(this.editGroup, false);
-            this.initiate_Translation_Data();
+            app.toolSet.update_BossElements_Group(this.editGroup);
+            
+            this.tMatrix = this.editGroup.getCTM();
         },
         
         
@@ -137,6 +140,7 @@
         
         remove_Edit_Group : function() {
             this.editGroup.parentElement.removeChild(this.editGroup);
+            app.toolSet.update_BossElements_Group();
         },
         
         
@@ -300,33 +304,31 @@
         
         
         
-        initiate_Translation_Data : function() {
-            this.tMatrix = this.editGroup.getAttribute("transform").slice(7, -1).split(",");
-            this.translationPivot = [parseFloat(this.tMatrix[4]), parseFloat(this.tMatrix[5])];
+        initilize_TMatrix : function(ele) {
+            let tmp = app.canvas.element.createSVGMatrix();
+            tmp = app.canvas.element.createSVGTransformFromMatrix(tmp);
+            ele.transform.baseVal.initialize(tmp);
         },
         
         
         
         
-        translate : function(x, y) {
-
-            x = this.translationPivot[0] + x;
-            y = this.translationPivot[1] + y;
-
-            let str = "matrix(" +
-                this.tMatrix[0] + "," +
-                this.tMatrix[1] + "," +
-                this.tMatrix[2] + "," +
-                this.tMatrix[3] + "," + x + "," + y + ")";
-
-            this.editGroup.setAttribute("transform", str);
+        update_Element_Transformation : function() {
+            this.tMatrix = this.editGroup.getCTM();
+            let tmp = app.canvas.element.createSVGTransformFromMatrix(this.tMatrix);
+            this.element.transform.baseVal.initialize(tmp);
         },
         
         
         
         
-        update_Element_Translation : function() {
-            this.passElementAttributes(this.editGroup, this.element, "transform");
+        translate : function(dVector) {
+            // dVector => Displacement Vector.
+            
+            let tmp = this.tMatrix.translate(dVector[0], dVector[1]);
+            
+            tmp = app.canvas.element.createSVGTransformFromMatrix(tmp);
+            this.editGroup.transform.baseVal.initialize(tmp);
         },
         
         
