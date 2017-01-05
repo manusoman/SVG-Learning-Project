@@ -93,14 +93,21 @@
         
         create_Edit_Group : function() {
             
+            this.tMatrix = this.element.getCTM();
+                
             this.editGroup = app.canvas.generate_SVG_Element("g");
             this.editGroup.setAttribute("class", "editGroup");
-            this.passElementAttributes(this.element, this.editGroup, "transform");
+            
+            app.canvas.apply_Transformation_From_SVGMatrix({
+                matrix  : this.tMatrix,
+                element : this.editGroup
+            });
             
             let type = this.identify_Path_Type();
             
             this.pathEditline = app.canvas.generate_SVG_Element(type);
             this.pathEditline.setAttribute("class", "pathEditLine");
+            this.pathEditline.setAttribute("fill", "transparent");
             
             if(type === "rect") {
                 
@@ -124,23 +131,20 @@
                 
             } else {
                 
-                this.pathEditline = null;
                 console.log("Custom Error: PathEditLine type is not mentioned or not understood!");
                 
             }
             
             app.canvas.append_SVG_Element(this.pathEditline, this.editGroup);
-            app.toolSet.update_BossElements_Group(this.editGroup);
             
-            this.tMatrix = this.editGroup.getCTM();
+            app.transformer.update_EditGroup("add", this.editGroup, this.tMatrix);
         },
         
         
         
         
         remove_Edit_Group : function() {
-            this.editGroup.parentElement.removeChild(this.editGroup);
-            app.toolSet.update_BossElements_Group();
+            app.transformer.update_EditGroup("remove", this.editGroup);
         },
         
         
@@ -334,6 +338,19 @@
         
         
         
+        transform : function(tMatrix) {
+            let tmpMatrix = this.element.getCTM();
+            tmpMatrix = tmpMatrix.multiply(tMatrix);
+            
+            app.canvas.apply_Transformation_From_SVGMatrix({
+                matrix  : tmpMatrix,
+                element : this.element
+            });
+        },
+        
+        
+        
+        
         copyColorNStroke : function(opt, attr) {
             
             if(opt === "set") {
@@ -377,7 +394,6 @@
             let tmp = source.getAttribute(attr);
             destn.setAttribute(attr, tmp);
         }
-        
         
     };
 

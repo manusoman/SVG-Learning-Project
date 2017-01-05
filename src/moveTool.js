@@ -9,11 +9,11 @@
     // Creates Prototypal-Inheritance.
     
     
-    app.moveTool.wasObjsDragged = false;
-    
+    app.moveTool.wasObjsDragged = false;    
     
     
     app.moveTool.doTheJob = function() {
+        
         this[this.mEventType]();
     };    
     
@@ -53,13 +53,12 @@
     app.moveTool.mousemove = function() {
             
         if(app.canvas.selectedObjects) {
-
-            let i, l = app.canvas.selectedObjects.length;
-
-            for(i = 0; i < l; i++) {
-                app.canvas.selectedObjects[i].translate(this.generate_Drag_Vector());
-            }
-
+            
+            let drag = this.generate_Drag_Vector();            
+            let tmp = app.canvas.generate_SVGMatrix();
+            tmp = tmp.translate(drag[0], drag[1]);
+            
+            this.transformer.transform(tmp);            
             this.wasObjsDragged = true;
 
         } else if(this.dragSelectRect) {
@@ -77,18 +76,15 @@
     app.moveTool.mouseup = function() {
             
         if(this.wasObjsDragged) { // Checks whether mouse was dragged.
-
-            let i, l = app.canvas.selectedObjects.length;
             
-            for(i = 0; i < l; i++) {
-                app.canvas.selectedObjects[i].update_Element_Transformation();
-            }
-
+            this.transformer.finishTransformation();
             this.wasObjsDragged = false;
 
         } else if(this.dragSelectRect) {
             this.dragSelect();
-        }            
+        } else {
+            // Nothing happens here.
+        }
     };
     
     

@@ -107,7 +107,11 @@
                             this.selectedObjects[i] = null;
                         }
                     }
+                    
                     this.selectedObjects = false;
+                    
+                    app.transformer.detachTransformer();
+                    
                     break;
                     
                     
@@ -134,6 +138,8 @@
         } else {
             console.log("Custom Error: Mode is not specified!");
         }
+        
+        console.log("teset");
 
     };
     
@@ -181,6 +187,33 @@
         ele.parentNode.removeChild(ele);
     };
     
+    
+    
+    app.canvas.generate_SVGMatrix = function() {
+        return this.element.createSVGMatrix();
+    };
+    
+    
+    
+    app.canvas.apply_Transformation_From_SVGMatrix = function(argList) {        
+        /*
+        argList => argument-list object.
+        
+        argList has 4 properties.
+        1. matrix  => the SVG matrix.
+        2. element => on which the transformation is done.
+        3. opt1    => 'baseVal' or 'AnimVal'. Understood as 'baseVal' if
+                      left blank.
+        4. opt2    => 'initialize' or 'appendItem'. Understood as 'initialize' if
+                      left blank.
+        */
+        
+        argList.opt1 = argList.opt1 ? argList.opt1 : "baseVal";
+        argList.opt2 = argList.opt2 ? argList.opt2 : "initialize";
+        
+        let tmp = this.element.createSVGTransformFromMatrix(argList.matrix);
+        argList.element.transform[argList.opt1][argList.opt2](tmp);
+    };
     
 
 })(window.app);

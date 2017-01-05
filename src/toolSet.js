@@ -7,7 +7,7 @@
     
     app.toolSet = {
         
-        activeTool           : false,
+        _activeTool          : false,
         
         mEventTarget         : {},
         mEventType           : "",
@@ -21,8 +21,15 @@
         vertexClickTolerance : 5,
         dragSelectRect       : false,
         
-        bossElement          : false,
-        boundingRect         : false,
+        transformer          : false,
+        
+        
+        
+        set activeTool(tool) {
+            this._activeTool = tool;
+            
+            this.startTool();
+        },
         
     
     
@@ -46,28 +53,31 @@
                 this.initialCoord = false;
             }
             
-            app[this.activeTool].doTheJob();
+            app[this._activeTool].doTheJob();
 
         },
         
         
         
         
-        createBossElementsGroup : function() {
+        startTool : function() {
             
-            this.bossElement = app.canvas.generate_SVG_Element("g");
-            this.bossElement.setAttribute("class", "bossElement");
-            
-            this.boundingRect = app.canvas.generate_SVG_Element("rect");
-            
-            app.canvas.append_SVG_Element(this.boundingRect, this.bossElement);
-            app.canvas.append_SVG_Element(this.bossElement);
+            if(this._activeTool === "moveTool") {
+                if(this.transformer) {
+                    this.transformer.update_BoundingRect();
+                }
+            }
         },
         
         
         
         
-        update_BossElements_Group : function(editGroup) {
+        // ******************************************************************
+        
+        // Delete this section after 'transformer' object starts
+        // working properly.
+        
+        /*update_BossElements_Group : function(editGroup) {
             
             if(editGroup) {
                 
@@ -78,21 +88,9 @@
             }
             
             this.update_BoundingRect();
-        },
+        },*/
         
-        
-        
-        
-        update_BoundingRect : function() {
-            
-            let tmpRect = this.bossElement.getBBox();
-            
-            this.boundingRect.setAttribute("x", tmpRect.x);
-            this.boundingRect.setAttribute("y", tmpRect.y);
-            this.boundingRect.setAttribute("width", tmpRect.width);
-            this.boundingRect.setAttribute("height", tmpRect.height);
-        },
-        
+        // ******************************************************************
 
 
 
@@ -193,11 +191,6 @@
     // This line tells the appUI object that the toolSet object
     // is created and ready for data transfer/reception.
     app.appUI.is_Tool_Set_Object_Ready = true;
-    
-    
-    // Creates the BossElementsGroup as soon as the toolset object
-    // is created.
-    app.toolSet.createBossElementsGroup();
 
 
 })(window.app);
