@@ -64,23 +64,27 @@ svg#Canvas .moveToolDragSelection {
     fill: #DDD;    
 }
 
-.bossElement {
+.transformer {
     stroke : #F00;
     stroke-width : .5;
 }
 
-.bossElement .pathEditLine {
-    fill : transparent;
+.transformer .boundingRect {
+    pointer-events: none;
 }
 
-.bossElement .vertex {
+/*.transformer .pathEditLine {
+    fill : transparent;
+}*/
+
+.transformer .vertex {
     fill : #FFF;
 }
 
-.bossElement .controlPoint {
+.transformer .controlPoint {
     fill : #F00;
 }
 
-.bossElement .false {
+.transformer .false {
     display: none;
 }
